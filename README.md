@@ -25,6 +25,16 @@ Moving beyond traditional CRUD applications, it features **Kera**, a RAG-powered
 
 ---
 
+## 📁 Project Structure Highlights
+
+```text
+├── NaadanRoute/      # Core project configuration & security settings
+├── accounts/         # User Authentication & Profile Management
+├── navigator/        # Administrative Dashboard & Logic
+├── tours/            # Travel Package Engines
+├── media/            # Dynamic user-uploaded travel assets
+└── static/           # Global CSS, JS, and UI frameworks
+```
 🧠 Feature Deep-Dive
 
 ### 1. Kera: The RAG-Lite Chatbot
