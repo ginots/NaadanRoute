@@ -1,0 +1,117 @@
+{% load static %}
+{% include "navigator/dashboard_nav.html" %}
+
+ <section>
+
+                  <h3 class="font-weight-bolder text-info text-gradient">Edit Packages</h3>
+
+                <div class="card-body">
+                  <form role="form" action="{% url 'update_travel_packages' data.id %}" method="post" enctype="multipart/form-data">
+                      {% csrf_token %}
+                    <label>Title</label>
+                    <div class="mb-3">
+                      <input type="text" name="title" value="{{data.title}}" style="width:300px;" class="form-control" placeholder="Add title" aria-label="Title" aria-describedby="title-addon" required>
+                        {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-{{message.tags}}" style="color:red;">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+
+                    </div>
+                    <label>Tag Line</label>
+                    <div class="mb-3">
+                      <input type="text" name="tagline" value="{{data.tagline}}" class="form-control" placeholder="Add Tagline" aria-label="Tagline" aria-describedby="tagline-addon" required>
+                    </div>
+                    <label>Destination</label>
+                    <div class="mb-3">
+                      <input type="text" name="destination" value="{{data.destination}}" class="form-control" placeholder="Add Destination" aria-label="Destination" aria-describedby="destination-addon" required>
+                    </div>
+                    <label>Images</label>
+                      {% for img in images %}
+                    <div class="mb-3">
+                        {% if img.images %}
+                        <img src="{{ img.images.url }}" height="100" width="100">
+                        <button type="button" class="btn btn-danger btn-sm delete-btn" data-url="{% url 'delete_package_image' img.id %}">Delete</button>
+                        {% else %}
+                        <p>No Images</p>
+                        {% endif %}
+                    </div>
+                      {% endfor %}
+                    <div class="mb-3">
+                        <input type="file" name="images" style="width:600px;" class="form-control" placeholder="Add Images" aria-label="Images" aria-describedby="images-addon" multiple>
+                    </div>
+                    <label>Description</label>
+                    <div class="mb-3">
+                        <textarea name="description" class="form-control" placeholder="Add Description" aria-label="Description" aria-describedby="description-addon" required>
+                            {{data.description}}
+                        </textarea>
+                    </div>
+                    <label>Duration</label>
+                    <div class="mb-3">
+                      <input type="text" name="duration" value="{{data.duration}}" class="form-control" placeholder="Add Duration" aria-label="Duration" aria-describedby="duration-addon" required>
+                    </div>
+                    <label>Display Price</label>
+                    <div class="mb-3">
+                      <input type="number" name="display_price" value="{{data.display_price}}" class="form-control" placeholder="Add Display Price" aria-label="DisplayPrice" aria-describedby="display-price-addon" required>
+                    </div>
+                    <label>Price</label>
+                    <div class="mb-3">
+                      <input type="number" name="price" value="{{data.price}}" class="form-control" placeholder="Add Price" aria-label="Price" aria-describedby="price-addon" required>
+                    </div>
+                    <label>Price For</label>
+                    <div class="mb-3">
+                      <input type="text" name="price_for" value="{{data.price_for}}" class="form-control" placeholder="per person/couple" aria-label="Price-for" aria-describedby="price-for-addon" required>
+                    </div>
+                    <label>Type</label>
+                    <div class="mb-3">
+                      <input type="text" name="type" value="{{data.type}}" class="form-control" placeholder="Add Type" aria-label="Type" aria-describedby="type-addon" required>
+                    </div>
+                    <div class="form-check form-switch">
+                        {% if data.status %}
+                      <input class="form-check-input" type="checkbox" name="status" value="Active" id="rememberMe" checked="">
+                        {% else %}
+                      <input class="form-check-input" type="checkbox" name="status" value="Active" id="rememberMe" >
+                        {% endif %}
+                      <label class="form-check-label" for="rememberMe">Status</label>
+                    </div>
+                    <div class="text-center">
+                      <button type="submit" style="width:150px;" class="btn bg-gradient-info mt-4 mb-0">Submit</button>
+                    </div>
+                  </form>
+                </div>
+
+
+    </section>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function(){
+    $(".delete-btn").click(function(){
+      var url = $(this).data("url");
+      var imgDiv = $(this).closest("div");
+
+      $.ajax({
+        url: url,
+        type: "POST",
+        data: {
+          csrfmiddlewaretoken: "{{ csrf_token }}"
+        },
+        success: function(response){
+          if(response.success){
+            imgDiv.remove();
+          } else {
+            alert("Error: " + response.error);
+          }
+        },
+        error: function(){
+          alert("Something went wrong while deleting the image.");
+        }
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

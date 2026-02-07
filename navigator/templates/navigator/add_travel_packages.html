@@ -1,0 +1,73 @@
+{% load static %}
+{% include "navigator/dashboard_nav.html" %}
+
+ <section>
+
+                  <h3 class="font-weight-bolder text-info text-gradient">Add Packages</h3>
+
+                <div class="card-body">
+                  <form role="form" action="{% url 'save_travel_packages' %}" method="post" enctype="multipart/form-data">
+                      {% csrf_token %}
+                    <label>Title</label>
+                    <div class="mb-3">
+                      <input type="text" name="title" style="width:300px;" class="form-control" placeholder="Add title" aria-label="Title" aria-describedby="title-addon" required>
+                        {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-{{message.tags}}" style="color:red;">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+
+                    </div>
+                    <label>Tag Line</label>
+                    <div class="mb-3">
+                      <input type="text" name="tagline" class="form-control" placeholder="Add Tagline" aria-label="Tagline" aria-describedby="tagline-addon" required>
+                    </div>
+                    <label>Destination</label>
+                    <div class="mb-3">
+                      <input type="text" name="destination" class="form-control" placeholder="Add Destination" aria-label="Destination" aria-describedby="destination-addon" required>
+                    </div>
+                    <label>Images</label>
+                    <div class="mb-3">
+                      <input type="file" name="images" style="width:600px;" class="form-control" placeholder="Add Images" aria-label="Images" aria-describedby="images-addon" multiple>
+                    </div>
+                    <label>Description</label>
+                    <div class="mb-3">
+                        <textarea  name="description" class="form-control" style="height: 200px; resize: vertical;" placeholder="Add Description" aria-label="Description" aria-describedby="description-addon" required></textarea>
+                    </div>
+                    <label>Duration</label>
+                    <div class="mb-3">
+                      <input type="text" name="duration" class="form-control" placeholder="Add Duration" aria-label="Duration" aria-describedby="duration-addon" required>
+                    </div>
+                    <label>Display Price</label>
+                    <div class="mb-3">
+                      <input type="number" name="display_price" class="form-control" placeholder="Add Display Price" aria-label="DisplayPrice" aria-describedby="display-price-addon" required>
+                    </div>
+                    <label>Price</label>
+                    <div class="mb-3">
+                      <input type="number" name="price" class="form-control" placeholder="Add Price" aria-label="Price" aria-describedby="price-addon" required>
+                    </div>
+                    <label>Price For</label>
+                    <div class="mb-3">
+                      <input type="text" name="price_for" class="form-control" placeholder="per person/couple" aria-label="Price-for" aria-describedby="price-for-addon" required>
+                    </div>
+                    <label>Type</label>
+                    <div class="mb-3">
+                      <input type="text" name="type" class="form-control" placeholder="Add Type" aria-label="Type" aria-describedby="type-addon" required>
+                    </div>
+                    <div class="form-check form-switch">
+                      <input class="form-check-input" type="checkbox" name="status" value="Active" id="rememberMe" checked="">
+                      <label class="form-check-label" for="rememberMe">Status</label>
+                    </div>
+                    <div class="text-center">
+                      <button type="submit" style="width:150px;" class="btn bg-gradient-info mt-4 mb-0">Submit</button>
+                    </div>
+                  </form>
+                </div>
+
+
+    </section>
+
+</body>
+</html>

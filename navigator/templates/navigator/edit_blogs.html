@@ -1,0 +1,113 @@
+{% load static %}
+{% include "navigator/dashboard_nav.html" %}
+
+ <section>
+
+                  <h3 class="font-weight-bolder text-info text-gradient">Edit Blog</h3>
+
+                <div class="card-body">
+
+                  <form role="form" action="{% url 'update_blog' data.id %}" method="post" enctype="multipart/form-data">
+                      {% csrf_token %}
+                    <label>Sub Category</label>
+                    <div class="mb-3">
+                      <select name="sub_category" style="width:300px;" class="form-control" aria-label="Sub Category" aria-describedby="sub-category-addon" required>
+                            {% for i in sub %}
+                        <option value="{{i.id}}"{% if i.id == data.sub_category_id %} selected{% endif %}>
+                            {{i.sub_category}}
+                        </option>
+                          {% endfor %}
+                      </select>
+
+                    </div>
+                    <label>Blog Title</label>
+                    <div class="mb-3">
+                      <input type="text" name="blog_title" value="{{data.blog_title}}" style="width:300px;" class="form-control" placeholder="Add blog title" aria-label="blog-title" aria-describedby="blog-title-addon" required>
+                        {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-{{message.tags}}" style="color:red;">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+
+                    </div>
+                    <label>Content</label>
+                    <div class="mb-3">
+                        <textarea name="content" class="form-control" placeholder="Add content" aria-label="content" aria-describedby="content-addon" required>
+                            {{data.content}}
+                        </textarea>
+                    </div>
+                    <label>Image1</label>
+                    <div class="mb-3">
+                        {% if data.image1 %}
+                        <img src="{{data.image1.url}}" height="100" width="100">
+                        {% else %}
+                        <p>No image</p>
+                        {% endif %}
+                      <input type="file" name="image1" style="width:600px;" class="form-control" placeholder="Add Image1" aria-label="Image1" aria-describedby="image1-addon">
+                    </div>
+                    <label>Sub Content</label>
+                    <div class="mb-3">
+                      <textarea name="sub_content" class="form-control" placeholder="Add sub_content" aria-label="sub_content" aria-describedby="sub_content-addon" required>
+                          {{data.sub_content}}
+                      </textarea>
+                    </div>
+                    <label>Title 2</label>
+                    <div class="mb-3">
+                      <input type="text" name="title2" value="{{data.title2}}" class="form-control" placeholder="Add title2" aria-label="title2" aria-describedby="title2-addon" required>
+                    </div>
+                    <label>Content 2</label>
+                    <div class="mb-3">
+                      <textarea name="content2" class="form-control" placeholder="Add content2" aria-label="content2" aria-describedby="content2-addon" required>
+                          {{data.content2}}
+                      </textarea>
+                    </div>
+                    <label>Image2</label>
+                    <div class="mb-3">
+                        {% if data.image2 %}
+                        <img src="{{data.image2.url}}" height="100" width="100">
+                        {% else %}
+                        <p>No image</p>
+                        {% endif %}
+                      <input type="file" name="image2" style="width:600px;" class="form-control" placeholder="Add Image2" aria-label="Image2" aria-describedby="image2-addon">
+                    </div>
+                    <label>Sub Content 2</label>
+                    <div class="mb-3">
+                      <textarea name="sub_content2" class="form-control" placeholder="Add sub_content2" aria-label="sub_content2" aria-describedby="sub_content2-addon" required>
+                          {{data.sub_content2}}
+                      </textarea>
+                    </div>
+                    <label>Summary Title</label>
+                    <div class="mb-3">
+                      <input type="text" name="summary_title" value="{{data.summary_title}}" class="form-control" placeholder="Add summary_title" aria-label="summary_title" aria-describedby="summary_title-addon" required>
+                    </div>
+                    <label>Summary Content</label>
+                    <div class="mb-3">
+                        <textarea name="summary_content" class="form-control" placeholder="Add summary_content" aria-label="summary_content" aria-describedby="summary_content-addon" required>
+                            {{data.summary_content}}
+                        </textarea>
+                    </div>
+                    <label>Tag</label>
+                    <div class="mb-3">
+                      <input type="text" name="tag" value="{{data.tag}}" class="form-control" placeholder="Add tag" aria-label="tag" aria-describedby="tag-addon" required>
+                    </div>
+                    <div class="form-check form-switch">
+                        {% if data.status %}
+                      <input class="form-check-input" type="checkbox" name="status" value="Active" id="rememberMe" checked="">
+                        {% else %}
+                      <input class="form-check-input" type="checkbox" name="status" value="Active" id="rememberMe" >
+                        {% endif %}
+                      <label class="form-check-label" for="rememberMe">Status</label>
+                    </div>
+                    <div class="text-center">
+                      <button type="submit" style="width:150px;" class="btn bg-gradient-info mt-4 mb-0">Submit</button>
+                    </div>
+                  </form>
+                </div>
+
+
+    </section>
+
+</body>
+</html>

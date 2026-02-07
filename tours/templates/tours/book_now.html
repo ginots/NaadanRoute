@@ -1,0 +1,499 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_head %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'tours/css/book_now.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/airbnb.css">
+
+{% endblock %}
+
+{% block content %}
+<div class="booking-page-wrapper">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-xl-10">
+
+        <div class="card">
+          <div class="form-header text-center">
+              <h2 class="display-5 font-weight-bold mb-2">Customize and Book</h2>
+
+              <div class="d-flex justify-content-center mb-3">
+                 <span class="badge badge-success px-3 py-2 rounded-pill shadow-sm">
+                    ✓ No additional charges
+                 </span>
+              </div>
+
+              <p class="text-muted mb-4">Fast, easy, and comfortable vacation customized for you.</p>
+
+              <div class="price-container">
+                <div class="price-inner">
+                    <span class="price-label">Grand Total</span>
+                    <div class="price-amount">
+                        <span class="currency">₹</span><span class="total-number">{{ total }}</span>
+                    </div>
+                </div>
+              </div>
+          </div>
+
+          <div class="card-body">
+            <form id="bookingForm" method="post" action="{% url 'save_booking' data.id %}" class="needs-validation" novalidate autocomplete="off">
+                {% csrf_token %}
+                <input type="hidden" name="order_id" value="{{razorpay_order_id}}">
+                <input type="hidden" name="payment_id" value="{{payment_id}}">
+                <input type="hidden" name="amount" value="{{razorpay_amount}}">
+                <input type="hidden" name="headcount" value="{{headcount}}">
+                <input type="hidden" name="price" value="{{total}}">
+                <input type="hidden" name="display_price" value="{{display_price_sum}}">
+
+                {% if user_address %}
+                    <button type="button" class="btn btn-sm btn-outline-info" id="toggleAddressMode" onclick="switchToSaved()">
+                        Use Saved Address
+                    </button>
+                {% endif %}
+
+               <div class="section-title d-flex justify-content-between align-items-center">Contact Information</div>
+               <div id="manual-form-container">
+                  <div class="form-row">
+                    <div class="form-group col-md-4">
+                      <label for="inputName">Full Name</label>
+                      <input type="text" class="form-control manual-input" id="inputName" name="fullname" placeholder="Enter name" required />
+                    </div>
+                    <div class="form-group col-md-4">
+                      <label for="inputEmail">Email</label>
+                      <input type="email" class="form-control manual-input" id="inputEmail" name="email" placeholder="email@example.com" required />
+                    </div>
+                    <div class="form-group col-md-4">
+                      <label for="inputPhone">Phone</label>
+                      <input type="tel" class="form-control manual-input" id="inputPhone" name="phone" placeholder="99xxxxxxxx" pattern="\d{10}" required />
+                    </div>
+                  </div>
+
+                  <div class="section-title">Billing Address</div>
+                  <div class="form-row">
+                    <div class="form-group col-md-4">
+                      <label for="inputAddress">Address</label>
+                      <input type="text" class="form-control manual-input" id="inputAddress" name="address" placeholder="Enter House name/no." required />
+                    </div>
+                    <div class="form-group col-md-4">
+                      <label for="inputCity">City</label>
+                      <input type="text" class="form-control manual-input" id="inputCity" name="city" placeholder="Enter city" required />
+                    </div>
+                    <div class="form-group col-md-4">
+                      <label for="inputDistrict">District</label>
+                      <input type="text" class="form-control manual-input" id="inputDistrict" name="district" placeholder="Enter district" required />
+                    </div>
+                    <div class="form-group col-md-4">
+                      <label for="inputState">State</label>
+                      <input type="text" class="form-control manual-input" id="inputState" name="state" placeholder="Enter state" required />
+                    </div>
+                    <div class="form-group col-md-4">
+                      <label for="inputPostcode">Postcode</label>
+                      <input type="text" class="form-control manual-input" id="inputPostcode" name="postcode" placeholder="600xxx"  required />
+                    </div>
+                  </div>
+                  <input type="radio" name="selected_address" value="new" id="rel-new" checked style="display:none;">
+               </div>
+                  {% if user_address %}
+                    <div id="saved-addresses-container" style="display: none;">
+                        <div class="row">
+                            {% for i in user_address %}
+                            <div class="col-md-4 mb-3">
+                                <div class="card h-100 border-primary shadow-sm">
+                                    <div class="card-body">
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" id="save{{ i.id }}" name="selected_address" value="{{ i.id }}" class="custom-control-input saved-radio">
+                                            <label class="custom-control-label" for="save{{ i.id }}">
+                                                <strong>{{ i.fullname }}</strong><br>
+                                                <small class="card-text">Email: {{ i.email }}</small><br>
+                                                <small class="card-text">Phone: {{ i.phone }}</small><br>
+                                                <small class="card-text">Address: </small>
+                                                <small class="card-text">{{ i.address }}, {{ i.city }}</small>
+                                                <small class="card-text">{{ i.district }}, {{ i.state }}</small>
+                                                <small class="card-text">{{ i.postcode }}</small>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <button type="button" class="btn btn-link btn-sm" onclick="switchToManual()">+ Enter a different address</button>
+                    </div>
+                  {% endif %}
+
+              <div class="section-title">Date & Room Details</div>
+              <div class="form-row">
+                <div class="form-group col-md-4">
+                  <label>Travel Date</label>
+                  <input type="text" class="form-control" name="date" id="datePicker" placeholder="Pick a date" required
+                         style="background: #fff; border-radius: 12px; border: 1px solid #E5E1D8; padding: 12px;">
+                </div>
+                <div class="form-group col-md-4">
+                  <label>Expected Hotel Check-in Time</label>
+                  <div class="time-picker-wrapper d-flex align-items-center">
+                    <select class="form-control time-select" name="checkin_time_hour" required>
+                      <option value="" disabled selected>Hr</option>
+                      <option value="00">00</option><option value="01">01</option><option value="02">02</option>
+                      <option value="03">03</option><option value="04">04</option><option value="05">05</option>
+                      <option value="06">06</option><option value="07">07</option>
+                      <option value="08">08</option><option value="09">09</option><option value="10">10</option>
+                      <option value="11">11</option><option value="12">12</option><option value="13">13</option>
+                      <option value="14">14</option><option value="15">15</option><option value="16">16</option>
+                      <option value="17">17</option><option value="18">18</option><option value="19">19</option>
+                      <option value="20">20</option><option value="21">21</option><option value="22">22</option>
+                      <option value="23">23</option></option>
+                    </select>
+                    <span class="mx-2">:</span>
+                    <select class="form-control time-select" name="checkin_time_minute" required>
+                      <option value="00">00</option>
+                      <option value="30">30</option>
+                    </select>
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="form-group mt-3">
+                  <label class="d-block mb-3"><h6>Choose Your Room</h6><br>Number of total rooms depends on room type/headcount</label>
+                  {% if headcount > 2 %}
+                <div class="room-selector d-flex flex-wrap">
+                  <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="single-room" name="room_type" value="single-room" required />
+                    <label class="form-check-label" for="single-room">Single Room (1 bed:1 Person)</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="double-room" name="room_type" value="double-room" required />
+                    <label class="form-check-label" for="double-room">Double Room (1 bed:2 Person)</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="twin-room" name="room_type" value="twin-room" required />
+                    <label class="form-check-label" for="twin-room">Twin Room (2 bed:2 Person)</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="quad-room" name="room_type" value="quad-room" required />
+                    <label class="form-check-label" for="quad-room">Quad Room (2 bed:4 Person)</label>
+                  </div>
+                </div>
+
+                  {% elif headcount > 1 %}
+
+                <div class="room-selector d-flex flex-wrap">
+                  <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="single-room" name="room_type" value="single-room" required />
+                    <label class="form-check-label" for="single-room">Single Room (1 bed:1 Person)</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="double-room" name="room_type" value="double-room" required />
+                    <label class="form-check-label" for="double-room">Double Room (1 bed:2 Person)</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="twin-room" name="room_type" value="twin-room" required />
+                    <label class="form-check-label" for="twin-room">Twin Room (2 bed:2 Person)</label>
+                  </div>
+                </div>
+
+                  {% else %}
+
+                <div class="room-selector d-flex flex-wrap">
+                  <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="single-room" name="room_type" value="single-room" required />
+                    <label class="form-check-label" for="single-room">Single Room (1 bed:1 Person)</label>
+                  </div>
+                </div>
+                  {% endif %}
+              </div>
+
+              <div class="section-title">Select Your Vibe(Optional)</div>
+              <div class="text-center my-4">
+                <button type="button" class="btn travel-expand-btn" onclick="toggleVibes()">
+                    <span id="expand-icon">+</span> Customize Your Trip Vibe
+                </button>
+              </div>
+
+                <div id="vibe-section" class="travel-vibe-container" style="display: none;">
+                 <div class="mt-4">
+                    <label class="form-label"><strong>When do you feel most energetic?</strong></label>
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <label class="energy-card">
+                                <input type="radio" name="energy_level" value="morning" class="travel-hidden-check">
+                                <div class="card p-3">
+                                    <div class="icon">🌅</div>
+                                    <small>Morning</small>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="col-4">
+                            <label class="energy-card">
+                                <input type="radio" name="energy_level" value="midday" class="travel-hidden-check">
+                                <div class="card p-3">
+                                    <div class="icon">☀️</div>
+                                    <small>Mid-day</small>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="col-4">
+                            <label class="energy-card">
+                                <input type="radio" name="energy_level" value="evening" class="travel-hidden-check">
+                                <div class="card p-3">
+                                    <div class="icon">🌙</div>
+                                    <small>Evening</small>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                 </div>
+                  <div class="row px-1">
+                      <label class="form-label"><strong>What's your mood?</strong></label>
+                      <div class="col-lg-4 col-md-6 col-12 mb-4">
+                        <label class="travel-choice-wrapper">
+                          <input type="checkbox" name="purpose" value="rest" class="travel-hidden-check">
+                          <div class="travel-selection-card">
+                            <div class="travel-check-badge">✓</div>
+                            <div class="travel-icon-box">🌿</div>
+                            <div class="travel-card-info">
+                              <span class="travel-item-name">Rest & Reset</span>
+                              <span class="travel-status-label">Select Vibe</span>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <div class="col-lg-4 col-md-6 col-12 mb-4">
+                        <label class="travel-choice-wrapper">
+                          <input type="checkbox" name="purpose" value="romance" class="travel-hidden-check">
+                          <div class="travel-selection-card">
+                            <div class="travel-check-badge">✓</div>
+                            <div class="travel-icon-box">💝</div>
+                            <div class="travel-card-info">
+                              <span class="travel-item-name">Honeymoon/Romance</span>
+                              <span class="travel-status-label">Select Vibe</span>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <div class="col-lg-4 col-md-6 col-12 mb-4">
+                        <label class="travel-choice-wrapper">
+                          <input type="checkbox" name="purpose" value="family" class="travel-hidden-check">
+                          <div class="travel-selection-card">
+                            <div class="travel-check-badge">✓</div>
+                            <div class="travel-icon-box">🪁</div>
+                            <div class="travel-card-info">
+                              <span class="travel-item-name">Family Bonding</span>
+                              <span class="travel-status-label">Select Vibe</span>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <div class="col-lg-4 col-md-6 col-12 mb-4">
+                        <label class="travel-choice-wrapper">
+                          <input type="checkbox" name="purpose" value="solo" class="travel-hidden-check">
+                          <div class="travel-selection-card">
+                            <div class="travel-check-badge">✓</div>
+                            <div class="travel-icon-box">📖</div>
+                            <div class="travel-card-info">
+                              <span class="travel-item-name">Solo Thinking Time</span>
+                              <span class="travel-status-label">Select Vibe</span>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <div class="col-lg-4 col-md-6 col-12 mb-4">
+                        <label class="travel-choice-wrapper">
+                          <input type="checkbox" name="purpose" value="adventure" class="travel-hidden-check">
+                          <div class="travel-selection-card">
+                            <div class="travel-check-badge">✓</div>
+                            <div class="travel-icon-box">🧗</div>
+                            <div class="travel-card-info">
+                              <span class="travel-item-name">Adventure</span>
+                              <span class="travel-status-label">Select Vibe</span>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <div class="col-lg-4 col-md-6 col-12 mb-4">
+                        <label class="travel-choice-wrapper">
+                          <input type="checkbox" name="purpose" value="culture" class="travel-hidden-check">
+                          <div class="travel-selection-card">
+                            <div class="travel-check-badge">✓</div>
+                            <div class="travel-icon-box">🌴</div>
+                            <div class="travel-card-info">
+                              <span class="travel-item-name">Culture Focused</span>
+                              <span class="travel-status-label">Select Vibe</span>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="form-group mt-2">
+                <label>Special Notes (optional)</label>
+                <textarea class="form-control" name="remark" rows="3" placeholder="Anything we should know to make this trip better?  eg: Anniversary, Health issues, Surprise plan"></textarea>
+              </div>
+
+              <div class="text-center mt-5">
+                <button id="rzp-button" class="btn btn-submit text-white" >Complete Booking</button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+
+    <script src="{% static 'tours/js/book_now.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script>
+function switchToSaved() {
+    // Toggle visibility
+    document.getElementById('manual-form-container').style.display = 'none';
+    document.getElementById('saved-addresses-container').style.display = 'block';
+
+    // Disabling validation and the inputs themselves
+    const manualInputs = document.querySelectorAll('.manual-input');
+    manualInputs.forEach(input => {
+        input.removeAttribute('required');
+        input.disabled = true; // Disabling prevents browser validation entirely
+    });
+
+    // Update radio logic
+    document.getElementById('rel-new').checked = false;
+    const firstSaved = document.querySelector('.saved-radio');
+    if (firstSaved) {
+        firstSaved.checked = true;
+    }
+}
+
+function switchToManual() {
+    // Toggle visibility
+    document.getElementById('manual-form-container').style.display = 'block';
+    document.getElementById('saved-addresses-container').style.display = 'none';
+
+    // Re-enable validation and inputs
+    const manualInputs = document.querySelectorAll('.manual-input');
+    manualInputs.forEach(input => {
+        input.setAttribute('required', '');
+        input.disabled = false;
+    });
+
+    // Resetting radio logic
+    document.getElementById('rel-new').checked = true;
+    // Unchecking all saved radios
+    const savedRadios = document.querySelectorAll('.saved-radio');
+    savedRadios.forEach(radio => radio.checked = false);
+}
+</script>
+
+<script>
+    (function() {
+      'use strict';
+      window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+          form.addEventListener('submit', function(event) {
+            if (form.checkValidity() === false) {
+              event.preventDefault();
+              event.stopPropagation();
+
+              // To scroll to the first error so the user sees it
+              const firstError = form.querySelector(':invalid');
+              if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }
+            }
+            form.classList.add('was-validated');
+          }, false);
+        });
+      }, false);
+    })();
+
+    function toggleVibes() {
+      var x = document.getElementById("vibe-section");
+      var icon = document.getElementById("expand-icon");
+
+      if (x.style.display === "none") {
+        x.style.display = "block";
+        icon.innerHTML = "−"; // Change to minus
+      } else {
+        x.style.display = "none";
+        icon.innerHTML = "+"; // Change back to plus
+      }
+    }
+
+
+</script>
+    <!-- Razorpay's Javascript code. -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+    var options = {
+        "key": "{{ razorpay_merchant_key }}", // Enter the Key ID generated from the Dashboard
+        "amount": "{{ razorpay_amount }}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+        "currency": "{{ currency }}",
+        "name": "test",
+        "description": "Test Transaction",
+        "image": "https://example.com/your_logo",
+        "order_id": "{{razorpay_order_id}}", //This is a sample Order ID. Pass the id obtained in the response of Step 1
+        "handler": function (response){
+            $('#bookingForm input[name=payment_id]').val(response.razorpay_payment_id)
+            document.getElementById('bookingForm').submit();
+        },
+        "prefill": {
+            "name": "Your Name",
+            "email": "youremail@gmail.com",
+            "contact": "1234567890"
+        },
+        "notes": {
+            "address": "Razorpay Corporate Office"
+        },
+        "theme": {
+            "color": "rgb(104,222,238)"
+        }
+    };
+    var rzp = new Razorpay(options);
+    rzp.on('payment.failed', function (response){
+        $('#myModal').modal();
+    });
+    document.getElementById('rzp-button').onclick = function(e) {
+        e.preventDefault();
+        var form = document.getElementById('bookingForm');
+
+    if (form.checkValidity() === false) {
+
+        form.classList.add('was-validated');
+
+
+        var firstError = form.querySelector(':invalid');
+
+        if (firstError) {
+            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            setTimeout(function() {
+                firstError.focus();
+            }, 600);
+        }
+    } else {
+        rzp.open();
+    }
+};
+
+  </script>
+
+{% endblock %}

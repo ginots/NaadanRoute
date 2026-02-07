@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>admin</title>
+    <link href="{% static 'navigator/css/navigator_login.css' %}" rel="stylesheet" />
+</head>
+<body>
+<div class="container">
+
+
+  <!-- Start Heading ************-->
+  <div class="heading">
+    <span class="span1">
+      - Naadan
+      <span>
+        Route -
+      </span>
+    </span>
+
+    <br/>
+
+    <span class="span2">
+      admin panel
+    </span>
+    <hr/>
+
+  </div>
+  <!-- End Heading ****************-->
+
+  <!-- Start Form *****************-->
+  <form action="/navigator/admin_check/" method="post">
+      {% csrf_token %}
+
+    <!-- Start Username Input *****-->
+    <input class="user" type="text" placeholder="Username" name="username"/>
+    <!-- End Username Input *******-->
+
+    <!-- Start Password Input *****-->
+    <input class="pass" type="password" placeholder="Password" name="password"/>
+    <!-- End Password Input *******-->
+
+    <input class="submit" type="submit" value="login" />
+  </form>
+  <!-- End Form *******************-->
+
+
+</div>
+</body>
+</html>

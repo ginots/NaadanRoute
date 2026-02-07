@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+	<title>{% block title %}NaadanRoute{% endblock %}</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Arizonia&display=swap" rel="stylesheet">
+
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+     <!-- Bootstrap CSS (must be here for modal styling) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+	<link rel="stylesheet" href="{% static 'css/animate.css' %}">
+
+	<link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}">
+	<link rel="stylesheet" href="{% static 'css/owl.theme.default.min.css' %}">
+	<link rel="stylesheet" href="{% static 'css/magnific-popup.css' %}">
+
+	<link rel="stylesheet" href="{% static 'css/bootstrap-datepicker.css' %}">
+	<link rel="stylesheet" href="{% static 'css/jquery.timepicker.css' %}">
+
+
+	<link rel="stylesheet" href="{% static 'css/flaticon.css' %}">
+	<link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <link href="{% static 'css/signin.css' %}" rel="stylesheet">
+
+
+
+  <!-- Bootstrap JS (with Popper) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  {% include "shared/navbar.html" %}
+
+  {% block content %}{% endblock %}
+
+  {% include "shared/footer.html" %}
+
+              <!-- Sign In Modal -->
+            <div class="modal fade" id="signInModal" tabindex="-1" aria-labelledby="signInLabel" aria-hidden="true">
+              <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="signInLabel">Sign In</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    {% include "accounts/sign_in.html" %}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+			<!-- Toast container -->
+            <div class="toast-container position-fixed top-0 end-0 p-3">
+                <div id="errorToast" class="toast align-items-center text-bg-danger border-0 w-auto p-2" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <!-- Error message will go here -->
+                        </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+                <div id="successToast" class="toast align-items-center text-white bg-success border-0 w-auto p-2" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body"></div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                        </div>
+                    </div>
+
+            </div>
+
+  <!-- loader -->
+			<div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+
+			<script src="{% static 'js/jquery.min.js' %}"></script>
+			<script src="{% static 'js/jquery-migrate-3.0.1.min.js' %}"></script>
+			<script src="{% static 'js/popper.min.js' %}"></script>
+			<script src="{% static 'js/bootstrap.min.js' %}"></script>
+			<script src="{% static 'js/jquery.easing.1.3.js' %}"></script>
+			<script src="{% static 'js/jquery.waypoints.min.js' %}"></script>
+			<script src="{% static 'js/jquery.stellar.min.js' %}"></script>
+			<script src="{% static 'js/owl.carousel.min.js' %}"></script>
+			<script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
+			<script src="{% static 'js/jquery.animateNumber.min.js' %}"></script>
+			<script src="{% static 'js/bootstrap-datepicker.js' %}"></script>
+			<script src="{% static 'js/scrollax.min.js' %}"></script>
+			<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
+			<script src="{% static 'js/google-map.js' %}"></script>
+			<script src="{% static 'js/main.js' %}"></script>
+
+            <script src="{% static 'js/signin.js' %}"></script>
+            <script>
+                    function showErrorToast(message) {
+                    const toastEl = document.getElementById("errorToast");
+                    toastEl.querySelector(".toast-body").textContent = message;
+                    const toast = new bootstrap.Toast(toastEl, {
+                    autohide: false,
+                    delay: 10000
+                    });
+                    toast.show();
+                    }
+                    function showSuccessToast(message) {
+                      const toastEl = document.getElementById("successToast");
+                      toastEl.querySelector(".toast-body").textContent = message;
+                      const toast = new bootstrap.Toast(toastEl, {
+                        autohide: false,
+                        delay: 10000
+                      });
+                      toast.show();
+                    }
+
+            </script>
+
+            {% if messages %}
+            <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                {% for message in messages %}
+                    {% if message.tags == "error" %}
+                        showErrorToast("{{ message }}");   // red
+                    {% elif message.tags == "success" %}
+                        showSuccessToast("{{ message }}"); // green
+                    {% endif %}
+                {% endfor %}
+            });
+            </script>
+            {% endif %}
+
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

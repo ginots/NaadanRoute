@@ -1,0 +1,234 @@
+{% extends "base.html" %}}
+{% load static %}
+{% block extra_head %}
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Cabin&family=Lora&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'tours/css/styles.css' %}">
+
+    <script src="https://code.iconify.design/iconify-icon/1.0.1/iconify-icon.min.js"></script>
+{% endblock %}
+
+{% block content %}
+
+<section class="hero-wrap hero-wrap-2 js-fullheight" style="background-image: url('{% static 'tours/images/Tours_dashboard.png' %}');">
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-center">
+      <div class="col-md-9 ftco-animate pb-5 text-center">
+         <p class="breadcrumbs"><span class="mr-2"><a href="/">Home <i class="fa fa-chevron-right"></i></a></span> <span>Tours<i class="fa fa-chevron-right"></i></span></p>
+         <h1 class="mb-0 bread">Tours</h1>
+     </div>
+ </div>
+</div>
+</section>
+
+
+
+<div id="chat-wrapper" class="floating-chat-anchor">
+    <div id="chat-teaser" class="glass-teaser">
+        <p class="mb-0">Feeling adventurous or a little stressed? I’d love to help you discover the trip you’ve been dreaming of! ✨</p>
+    </div>
+
+    <div id="chat-circle" class="pulse-animation">
+        <div class="online-indicator"></div>
+        <img src="{% static 'tours/images/kera-avatar.png' %}" alt="Kera" class="floating-kera-avatar">
+    </div>
+</div>
+
+<div class="chat-box shadow-lg d-none" id="chat-window-element">
+    <div class="chat-box-header">
+        <div class="d-flex align-items-center">
+            <div class="avatar-circle me-2">
+                <img src="{% static 'tours/images/kera-avatar.png' %}"  alt="Kera" >
+            </div>
+            <div>
+                <h6 class="mb-0 text-white">Kera</h6>
+                <small class="text-white-50">Kerala's Travel Expert</small>
+            </div>
+        </div>
+        <span id="chat-box-toggle" style="cursor: pointer;"><iconify-icon icon="ph:x-bold"></iconify-icon></span>
+    </div>
+    <div class="chat-box-body" id="chat-logs" style="padding: 15px; flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column;">
+        {% for msg in chat_history %}
+            <div class="{% if msg.role == 'user' %}user-msg{% else %}bot-msg{% endif %}">
+                {{ msg.content }}
+            </div>
+        {% empty %}
+            <div class="bot-msg">Hi! I'm Kera. How are you feeling today?</div>
+        {% endfor %}
+    </div>
+    <div class="chat-input" style="padding: 10px; display: flex; background: rgba(255,255,255,0.1);">
+        <input type="text" id="chat-input" class="form-control rounded-pill" placeholder="Type your mood...">
+        <button id="chat-submit" class="btn btn-link text-white"><iconify-icon icon="ph:paper-plane-right-fill" width="24"></iconify-icon></button>
+    </div>
+</div>
+
+
+
+
+<div class="tickets-container">
+    {% csrf_token %}
+
+    {% if recommended_pkg %}
+    <div id="personal-tour" style="text-align: center; margin: 10px 0;">
+        <span style="display: block; color: #888; font-size: 17px; margin-top: 10px;">Picked for you💝</span>
+        <hr style="border: 2px dashed #ccc; width: 50%; display: inline-block;">
+    </div>
+    <div id="recommended-item" class="item recommended-glow">
+        <div class="kera-badge">✨ Kera's Personal Pick</div>
+
+        <div class="item-right">
+            <button class="wishlist-btn" onclick="toggleWishlist('{{ recommended_pkg.id }}', this)">
+                {% if recommended_pkg.id in wishlist_ids %}
+                    <iconify-icon icon="ph:heart-fill" class="heart-icon text-danger" width="28" height="28"></iconify-icon>
+                {% else %}
+                    <iconify-icon icon="ph:heart-thin" class="heart-icon" width="28" height="28"></iconify-icon>
+                {% endif %}
+            </button>
+            <h5>{{ recommended_pkg.destination }}</h5>
+            <h3 class="num">{{ recommended_pkg.title }}</h3>
+            <p class="ref">{{ recommended_pkg.type }} | {{ recommended_pkg.duration }}</p>
+            <div class="icons">
+                <p class="day"><iconify-icon icon="ph:bed-thin" width="32" height="32"></iconify-icon>relax </p>
+                <p class="day"><iconify-icon icon="ph:arrows-out-simple-thin" width="32" height="32"></iconify-icon> <span></span></p>
+                <p class="day"><iconify-icon icon="ph:bathtub-thin" width="32" height="32"></iconify-icon>refresh </p>
+                <p class="day"><iconify-icon icon="ph:chart-bar-thin" width="32" height="32"></iconify-icon> </p>
+                <p class="day"><iconify-icon icon="ph:car-thin" width="32" height="32"></iconify-icon> trip</p>
+                <p class="day"><iconify-icon icon="ph:calendar-thin" width="32" height="32"></iconify-icon> 2025</p>
+                <p class="day"><iconify-icon icon="ph:train-thin" width="32" height="32"></iconify-icon> yay</p>
+                <p class="day"><iconify-icon icon="ph:battery-charging-thin" width="32" height="32"></iconify-icon> peace</p>
+            </div>
+
+            <div class="buy">
+                <span class="up-border"></span>
+                <span class="down-border"></span>
+                <p>INR {{ recommended_pkg.price }}</p>
+                <a href="{% url 'tours_details' recommended_pkg.slug %}" class="buy-button">Book</a>
+            </div>
+        </div>
+
+        <div class="item-left">
+           <div class="barcode">
+                <iconify-icon icon="el:barcode" width="65" height="400" rotate="90deg"></iconify-icon>
+            </div>
+           <div class="owl-carousel owl-theme property-slider">
+                {% for img in recommended_pkg.media.all %}
+                <div class="slide-item"> <img src="{{ img.images.url }}" class="slider-img" alt="Property Image"></div>
+                {% endfor %}
+           </div>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin: 40px 0;">
+        <hr style="border: 2px dashed #ccc; width: 50%; display: inline-block;">
+        <span style="display: block; color: #888; font-size: 17px; margin-top: 10px;">OTHER AMAZING OPTIONS</span>
+        <hr style="border: 2px dashed #ccc; width: 50%; display: inline-block;">
+    </div>
+    {% endif %}
+
+    {% for i in pac %}
+    <div class="item" data-category="{{ i.type|lower }}">
+        <div class="item-right">
+            <button class="wishlist-btn" onclick="toggleWishlist('{{ i.id }}', this)" aria-label="Add to Wishlist">
+                {% if i.id in wishlist_ids %}
+                    <iconify-icon icon="ph:heart-fill" class="heart-icon text-danger" width="28" height="28"></iconify-icon>
+                {% else %}
+                    <iconify-icon icon="ph:heart-thin" class="heart-icon" width="28" height="28"></iconify-icon>
+                {% endif %}
+            </button>
+            <h5>{{ i.destination }}</h5>
+            <h3 class="num">{{ i.title }}</h3>
+            <p class="ref">{{ i.type }} | {{ i.duration }}</p>
+
+            <div class="icons">
+                <p class="day"><iconify-icon icon="ph:bed-thin" width="32" height="32"></iconify-icon>relax </p>
+                <p class="day"><iconify-icon icon="ph:arrows-out-simple-thin" width="32" height="32"></iconify-icon> <span></span></p>
+                <p class="day"><iconify-icon icon="ph:bathtub-thin" width="32" height="32"></iconify-icon>refresh </p>
+                <p class="day"><iconify-icon icon="ph:chart-bar-thin" width="32" height="32"></iconify-icon> </p>
+                <p class="day"><iconify-icon icon="ph:car-thin" width="32" height="32"></iconify-icon> trip</p>
+                <p class="day"><iconify-icon icon="ph:calendar-thin" width="32" height="32"></iconify-icon> 2025</p>
+                <p class="day"><iconify-icon icon="ph:train-thin" width="32" height="32"></iconify-icon> yay</p>
+                <p class="day"><iconify-icon icon="ph:battery-charging-thin" width="32" height="32"></iconify-icon> peace</p>
+            </div>
+
+            <div class="buy">
+                <span class="up-border"></span>
+                <span class="down-border"></span>
+                <p>INR {{ i.price }}</p>
+                <a href="{% url 'tours_details' i.slug %}" class="buy-button">
+                Book
+                </a>
+            </div>
+        </div>
+
+        <div class="item-left">
+            <div class="barcode">
+                <iconify-icon icon="el:barcode" width="65" height="400" rotate="90deg"></iconify-icon>
+            </div>
+
+           <div class="owl-carousel owl-theme property-slider">
+                {% for img in i.media.all %}
+                <div class="slide-item"> <img src="{{ img.images.url }}" class="slider-img" alt="Property Image">
+                </div>
+                {% endfor %}
+           </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="pagination-wrapper mt-5 mb-5">
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if pac.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ pac.previous_page_number }}&mood={{selected_mood}}" aria-label="Previous">
+                            <iconify-icon icon="ph:caret-left-bold"></iconify-icon>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% for num in pac.paginator.page_range %}
+                    {% if pac.number == num %}
+                        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% elif num > pac.number|add:'-3' and num < pac.number|add:'3' %}
+                        <li class="page-item"><a class="page-link" href="?page={{ num }}&mood={{selected_mood}}">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if pac.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ pac.next_page_number }}&mood={{selected_mood}}" aria-label="Next">
+                            <iconify-icon icon="ph:caret-right-bold"></iconify-icon>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+
+</div>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
+    <div id="ajaxToast" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body" id="ajaxToastMessage" style="font-weight: 500;">
+                </div>
+            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const wishlistUrl = "{% url 'wishlist_toggle' %}";
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+<script src="{% static 'tours/js/tours_dashboard.js' %}"></script>
+
+{% endblock %}

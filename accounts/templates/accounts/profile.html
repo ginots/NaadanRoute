@@ -1,0 +1,450 @@
+{% extends "base.html" %}}
+{% load static %}
+{% block extra_head %}
+
+    <style>
+      /* This ONLY targets the global toast when this specific page is loaded */
+      #profile-dashboard ~ .toast-container,
+      body:has(#profile-dashboard) .toast-container {
+          z-index: 10005 !important; /* Lift above nav */
+          top: 85px !important;      /* Push below nav */
+          position: fixed !important;
+      }
+    </style>
+    <link rel="stylesheet" type="text/css" href="{% static 'accounts/css/profile.css' %}">
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
+{% endblock %}
+
+{% block content %}
+
+
+<div id="profile-dashboard">
+    <aside class="sidebar" aria-label="Primary">
+      <nav class="nav" role="navigation">
+        <a class="nav-link is-active" href="#" aria-current="page">Dashboard</a>
+        <a class="nav-link" href="#wishlist">My Wishlist</a>
+        <a class="nav-link" href="#calendar">Calendar</a>
+        <a class="nav-link" href="#bookings">My Bookings</a>
+        <a class="nav-link" href="#settings">Settings</a>
+      </nav>
+
+
+    </aside>
+
+    <div class="page">
+      <header class="topbar" role="banner">
+        <div class="brand">
+        <button class="sidebar-toggle mobile-only d-lg-none" aria-label="Toggle sidebar" aria-expanded="true">☰</button>
+        </div>
+        <div class="search">
+          <svg class="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M10 18a8 8 0 1 1 5.292-14.03A8 8 0 0 1 10 18Zm11 3-6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" />
+          </svg>
+          <input type="search" placeholder="Search courses, tasks…" aria-label="Search" />
+        </div>
+
+        <div class="topbar-actions">
+
+          <a href="{% url 'tours_dashboard' %}" class="btn">New trip</a>
+          <img class="avatar" src="{% static 'accounts/images/avatar.png' %}" alt="User avatar" />
+        </div>
+      </header>
+
+     <main class="content" role="main">
+        <!-- Summary cards -->
+       <div class="cards">
+          <div class="card kpi">
+            <div class="card-header">
+              <span class="muted">Total Trips</span>
+              <span class="pill up">✈️</span>
+            </div>
+            <div class="kpi-value">{{booking_count}}</div>
+            <div class="muted">Trips completed</div>
+          </div>
+
+          <div class="card kpi">
+            <div class="card-header">
+              <span class="muted">Loyalty Points</span>
+              <span class="pill">⭐</span>
+            </div>
+            <div class="kpi-value">0</div>
+            <div class="muted">Coming Soon</div>
+          </div>
+
+          <div class="card kpi">
+            <div class="card-header">
+              <span class="muted">Total Spending</span>
+              <span class="pill up">🪙</span>
+            </div>
+            <div class="kpi-value">{{spending}}</div>
+              {% if spending_diff > 0 %}
+            <div class="muted">+{{spending_diff}} this year</div>
+              {% endif %}
+          </div>
+
+          <div class="card kpi">
+            <div class="card-header">
+              <span class="muted">Bucket List</span>
+              <span class="pill">📍</span>
+            </div>
+            <div class="kpi-value">{{wishlist_count}}</div>
+            <div class="muted">in your wishlist</div>
+          </div>
+       </div>
+
+        <section class="grid">
+          <!-- Profile -->
+          <article class="card profile" aria-label="Profile">
+            <div class="profile-header">
+              <img class="profile-avatar" src="{% static 'accounts/images/user-avatar.png' %}" alt="Student photo" />
+              <div>
+                <h3>{{user.first_name}}</h3>
+                <p class="muted">{{user.email}}</p>
+              </div>
+            </div>
+
+
+            {% if user_address %}
+                <div id="saved-addresses-container" class="mt-4">
+                    <h3 class="mb-3" style="font-weight: 700; font-size: 1.2rem;">Saved Addresses</h3>
+                    <div class="row">
+                        {% for i in user_address %}
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="address-card">
+                                <div class="address-header">
+                                    <span class="address-name">{{ i.fullname }}</span>
+                                    <span class="address-badge">Home</span>
+                                </div>
+                                <div class="address-body">
+                                    <p><i class="icon-envelope"></i> {{ i.email }}</p>
+                                    <p><i class="icon-phone"></i> {{ i.phone }}</p>
+                                    <hr>
+                                    <p class="address-text">
+                                        {{ i.address }}, {{ i.city }}<br>
+                                        {{ i.district }}, {{ i.state }} - {{ i.postcode }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% else %}
+                <div class="wellbeing-empty-state mt-4">
+                    <div class="empty-icon">📍</div>
+                    <h4>Start your map of calm</h4>
+                    <p>You haven't saved any addresses yet. Add an address to make booking your next restorative journey even faster.</p>
+                    <button type="button" class="btn btn-add-first" data-toggle="modal" data-target="#addAddressModal">
+                        + Add your first address
+                    </button>
+                </div>
+            {% endif %}
+          </article>
+
+          <!-- Wishlist -->
+          <div id="wishlist" class="card wishlist-card">
+            <div class="card-header">
+              <h3>Wishlist</h3>
+              <a href="{% url 'view_all_wishlists' %}" class="btn-view-wish">
+                  <span>View All</span>
+              </a>
+
+            </div>
+            {% for i in wishlist %}
+              <div class="wishlist-items">
+                <a href="{% url 'tours_details' i.package.slug %}">
+                  <div class="wish-item">
+                    <div class="wish-info">
+                      <h4>{{i.package.title}}</h4>
+                      <span class="badge">{{i.package.destination}}</span>
+                      <small>{{i.package.duration}}</small>
+                    </div>
+                    <div class="wish-meta">
+                      <div class="meta-data">
+                        <div class="meta-row">
+                          <span class="meta-label">Type:</span>
+                          <span class="meta-value">{{i.package.type}}</span>
+                        </div>
+                        <div class="meta-row">
+                          <span class="meta-label">Experience for:</span>
+                          <span class="meta-value">₹{{i.package.price}}</span>
+                        </div>
+                      </div>
+
+                      <button class="btn-remove-wish" onclick="event.preventDefault(); event.stopPropagation(); toggleWishlist('{{ i.package.id }}', this);">
+                        <iconify-icon icon="ph:trash-bold"></iconify-icon>
+                        <span>Remove</span>
+                      </button>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            {% empty %}
+              <div class="wishlist-empty">
+                <iconify-icon icon="ph:heart-break-light"></iconify-icon>
+                <h4>Your wishlist is empty</h4>
+                <p>You haven't saved any journeys yet.</p>
+                <a href="{% url 'tours_dashboard' %}" class="btn-explore">Explore Tours</a>
+              </div>
+            {% endfor %}
+          </div>
+
+          <!-- Calendar -->
+          <article id="calendar" class="card calendar-card" aria-label="cultural compass">
+            <div class="card-header">
+              <h3 id="calendarTitle">Cultural Compass</h3>
+              <div class="calendar-controls" role="group" aria-label="Month navigation">
+                <button class="chip" id="prevMonth" aria-label="Previous month">◀</button>
+                <button class="chip" id="todayBtn" aria-label="Go to today">Today</button>
+                <button class="chip" id="nextMonth" aria-label="Next month">▶</button>
+              </div>
+            </div>
+
+            <div class="calendar" role="grid" aria-labelledby="calendarTitle">
+              <div class="calendar-head" role="row">
+                <span role="columnheader">Mon</span>
+                <span role="columnheader">Tue</span>
+                <span role="columnheader">Wed</span>
+                <span role="columnheader">Thu</span>
+                <span role="columnheader">Fri</span>
+                <span role="columnheader">Sat</span>
+                <span role="columnheader">Sun</span>
+              </div>
+              <div id="calendarBody" class="calendar-body" role="rowgroup">
+                <!-- Days injected by JS -->
+              </div>
+            </div>
+          </article>
+        </section>
+          <!-- Bookings -->
+            <div id="bookings" class="card mt-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                  <h3>My Journeys</h3>
+                    <span class="muted" style="font-size: 0.9rem;">Your restorative experiences</span>
+                </div>
+
+                {% if bookings %}
+                <div class="table-wrap px-3">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Journey</th>
+                                <th>Date</th>
+                                <th>ID</th>
+                                <th>Vibe</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in bookings %}
+                            <tr>
+                                <td>
+                                    <span style="font-weight: 700; color: var(--text); font-size: 1rem;">{{i.package.title}}</span><br>
+                                    <small style="color: var(--brand); font-weight: 500;">
+                                        <i class="icon-pin"></i> {{i.package.destination}}
+                                    </small>
+                                </td>
+                                <td class="text-muted" style="font-size: 0.9rem;">
+                                    {{i.checkin_date}}
+                                </td>
+                                <td>
+                                    <code style="background: #f1f5f9; padding: 2px 6px; border-radius: 4px; color: var(--muted);">{{i.order_id}}</code>
+                                </td>
+                                <td>
+                                    <span class="vibe-tag
+                                        {% if 'rest' in i.vibe|lower %}vibe-rest
+                                        {% elif 'romance' in i.vibe|lower %}vibe-romance
+                                        {% elif 'family' in i.vibe|lower %}vibe-family
+                                        {% elif 'solo' in i.vibe|lower %}vibe-solo
+                                        {% elif 'adventure' in i.vibe|lower %}vibe-adventure
+                                        {% elif 'culture' in i.vibe|lower %}vibe-culture
+                                        {% else %}vibe-bag{% endif %}">
+
+                                        {% if 'rest' in i.vibe|lower %}🧘
+                                        {% elif 'romance' in i.vibe|lower %}💝
+                                        {% elif 'family' in i.vibe|lower %}👨‍👩‍👧
+                                        {% elif 'solo' in i.vibe|lower %}👤
+                                        {% elif 'adventure' in i.vibe|lower %}🧗
+                                        {% elif 'culture' in i.vibe|lower %}}🏛️
+                                        {% else %}🧳{% endif %}
+
+                                        {{ i.vibe|capfirst }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="status-pill {% if i.order_status == 'Completed' %}completed{% else %}pending{% endif %}">
+                                        {{i.order_status}}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                    <div class="wellbeing-booking-empty">
+                        <div class="journey-illustration">
+                            <span class="sun-glow"></span>
+                            <div class="icon-wrap">🧭</div>
+                        </div>
+                        <h4>The horizon is waiting</h4>
+                        <p>You haven't embarked on a journey with us yet. Whenever you're ready to recharge, your restorative experiences will appear here.</p>
+                        <a href="{% url 'tours_dashboard' %}" class="btn btn-wellness-cta">
+                            Explore
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+            <div id="settings" class="card settings-card mt-4">
+                <div class="card-header">
+                    <h3 class="mb-0">Account Settings</h3>
+                    <iconify-icon icon="ph:gear-six-bold" class="muted"></iconify-icon>
+                </div>
+
+                <div class="settings-body">
+                    <div class="settings-item">
+                        <div class="settings-info">
+                            <iconify-icon icon="ph:lock-key-bold" class="settings-icon"></iconify-icon>
+                            <div>
+                                <p class="settings-label">Password</p>
+                                <p class="settings-desc">Update your password to keep your account secure.</p>
+                            </div>
+                        </div>
+                        <button class="btn ghost btn-sm" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                            Change Password
+                        </button>
+                    </div>
+                </div>
+            </div>
+     </main>
+    </div>
+</div>
+
+<div class="modal fade" id="addAddressModal" tabindex="-1" aria-labelledby="addAddressModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 24px; border: none; box-shadow: var(--shadow); overflow: hidden;">
+
+            <form action="{% url 'save_first_address' %}" method="POST">
+                {% csrf_token %}
+                <div class="modal-body" style="padding: 24px;">
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label class="wellbeing-label">Full Name</label>
+                            <input type="text" name="fullname" class="form-control wellbeing-input" placeholder="Enter Full Name" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="wellbeing-label">Email Address</label>
+                            <input type="email" name="email" class="form-control wellbeing-input" placeholder="email@example.com" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="wellbeing-label">Phone Number</label>
+                            <input type="tel" name="phone" class="form-control wellbeing-input" placeholder="99..." pattern="\d{10}" required>
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            <label class="wellbeing-label">Street Address</label>
+                            <input type="text" name="address" class="form-control wellbeing-input" placeholder="Enter House name/no." required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="wellbeing-label">City</label>
+                            <input type="text" name="city" class="form-control wellbeing-input" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="wellbeing-label">Postcode</label>
+                            <input type="text" name="postcode" class="form-control wellbeing-input" required>
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            <label class="wellbeing-label">District & State</label>
+                            <div class="d-flex gap-2">
+                                <input type="text" name="district" class="form-control wellbeing-input mr-2" placeholder="District" required>
+                                <input type="text" name="state" class="form-control wellbeing-input" placeholder="State" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer" style="border-top: 1px solid #eef2f6; padding: 20px 24px;">
+                    <button type="button" class="btn btn-link text-muted" data-dismiss="modal" style="text-decoration: none; font-weight: 600;">Cancel</button>
+                    <button type="submit" class="btn" style="background: var(--brand); color: white; border-radius: 12px; font-weight: 700; padding: 12px 30px; box-shadow: 0 4px 15px rgba(46, 107, 255, 0.25);">
+                        Save Address
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content wellbeing-modal">
+      <div class="modal-header border-0">
+        <h5 class="modal-title fw-bold">Update Password</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{% url 'change_password' %}">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="wellbeing-label">Current Password</label>
+            <input type="password" name="old_password" class="form-control wellbeing-input" placeholder="••••••••" required>
+          </div>
+          <div class="mb-3">
+            <label class="wellbeing-label">New Password</label>
+            <input type="password" name="new_password" class="form-control wellbeing-input" placeholder="Min. 8 characters" required>
+          </div>
+          <div class="mb-3">
+            <label class="wellbeing-label">Confirm New Password</label>
+            <input type="password" name="confirm_password" class="form-control wellbeing-input" placeholder="••••••••" required>
+          </div>
+          <div class="mt-4">
+            <button type="submit" class="btn btn-primary w-100 py-2">Update Password</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+
+    <script src="{% static 'accounts/js/profile.js' %}"></script>
+    <script>
+        function toggleWishlist(packageId, buttonElement) {
+            const url = "{% url 'wishlist_toggle' %}";
+            const csrfToken = "{{ csrf_token }}";
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: {
+                    'package_id': packageId,
+                    'action': 'remove',
+                    'csrfmiddlewaretoken': csrfToken
+                },
+                success: function(response) {
+                    if (response.status === 'ok') {
+                        $(buttonElement).closest('.wishlist-items').slideUp(400, function() {
+                            $(this).remove();
+                            if ($('.wishlist-items').length === 0) {
+                                location.reload();
+                            }
+                        });
+                    }
+                },
+                error: function() {
+                    alert("Error removing item.");
+                }
+            });
+        }
+    </script>
+
+{% endblock %}

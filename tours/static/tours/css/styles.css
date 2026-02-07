@@ -1,0 +1,574 @@
+html {
+    scroll-behavior: smooth;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    background-color: #F4F2EE;
+    font-family: 'Poppins', sans-serif;
+}
+
+/*  THE OUTER WRAPPER */
+.tickets-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 50px;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #F4F2EE 0%, #EAE7E2 100%);
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+}
+
+/* THE TICKET ITSELF */
+.item {
+    display: flex;
+    width: 1050px;
+    height: 400px;
+    background: #fff;
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(165, 153, 128, 0.1);
+    /* The Animation Trigger */
+    animation: highEndReveal 0.7s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+    will-change: opacity, transform;
+}
+
+@keyframes highEndReveal {
+    0% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.98);
+        filter: blur(5px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+.item-right {
+    width: 35%;
+    height: 100%;
+    position: relative;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    border-right: 2px dashed #DCD8D0;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+}
+
+.item-right .num { font-size: 40px; margin: 0; text-align: center; }
+
+.icons { display: flex; flex-wrap: wrap; justify-content: space-between; margin-top: 20px; }
+.day { width: 25%; text-align: center; font-size: 14px; }
+
+.item-left {
+    width: 65%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+    background-color: #f9f9f9; /* Placeholder for image loading */
+}
+
+
+
+@keyframes imageFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* TICKET PUNCH HOLES */
+.up-border, .down-border {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background: #F4F2EE; /* Matches the linen background */
+    border-radius: 50%;
+    right: -15px;
+    z-index: 10;
+}
+.up-border { top: -15px; }
+.down-border { bottom: -15px; }
+
+/*  BUY SECTION */
+.buy {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0 10px 0;
+    border-top: 1px solid #eee;
+    width: 100%;
+}
+
+.buy-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    background-color: #064E3B;
+    color: white;
+    padding: 10px 25px;
+    border-radius: 25px;
+    font-weight: 700;
+    transition: 0.2s;
+}
+
+
+/* Fix the blank space around the slider */
+.property-slider {
+    width: 100%;
+    height: 400px;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Ensure the Owl Carousel stage fills the 400px height */
+.property-slider .owl-stage-outer,
+.property-slider .owl-stage,
+.property-slider .owl-item {
+    height: 400px !important;
+}
+
+/* The Slide Container */
+.slide-item {
+    height: 400px;
+    width: 100%;
+    overflow: hidden;
+    background-color: #f1f1f1;
+}
+
+/* Force the image to fill height and width without 'empty' bars */
+.slider-img {
+    width: 100% !important;
+    height: 400px !important;
+    object-fit: cover; /* This eliminates the blank space above/below */
+    display: block;
+}
+
+/* Bring the Nav buttons back and make them visible */
+.owl-nav {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Allows clicking through to dots if needed */
+}
+
+.owl-nav button {
+    pointer-events: all; /* Reactivates clicking on the actual buttons */
+    position: absolute;
+    top: 50% !important;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.4) !important;
+    color: white !important;
+    padding: 10px 15px !important;
+    font-size: 30px !important;
+    border-radius: 5px;
+    z-index: 100;
+}
+
+/* The missing 'Next' button fix */
+.owl-prev { left: 10px !important; }
+.owl-next { right: 10px !important; } /* Pulling it 10px away from the edge */
+
+/* Style the dots so they sit on top of the image */
+.owl-dots {
+    position: absolute;
+    bottom: 15px;
+    width: 100%;
+    text-align: center;
+    z-index: 100;
+}
+
+@media (max-width: 1100px) {
+    /*  Allow the ticket to shrink and change direction to vertical */
+    .item {
+        flex-direction: column-reverse; /* Put image on top, info on bottom */
+        width: 95%;      /* Take up most of the phone width */
+        height: auto;    /* Let the height grow based on content */
+        margin: 0 auto;
+    }
+
+    /*  Make both sections full width */
+    .item-right, .item-left {
+        width: 100% !important;
+        height: auto;
+    }
+
+    /*  Adjust the slider height for mobile */
+    .item-left,
+    .property-slider,
+    .property-slider .owl-stage-outer,
+    .slide-item,
+    .slider-img {
+        height: 250px !important; /* Shorter images look better on phones */
+    }
+
+    /*  Hide the barcode on mobile (optional, but saves space) */
+    .barcode {
+        display: none;
+    }
+
+    /*  Adjust the big text size */
+    .item-right .num {
+        font-size: 30px;
+        text-align: left;
+    }
+
+    /* Fix the ticket punch holes for vertical layout */
+    .item-right {
+        border-right: none;
+        border-top: 2px dashed #DCD8D0; /* Move dash line to the top */
+        padding-top: 30px;
+    }
+
+    .up-border, .down-border {
+        right: auto;
+        left: -15px; /* Move them to the left side */
+        top: -15px;
+        background: #F4F2EE;
+    }
+
+    .down-border {
+        left: auto;
+        right: -15px; /* One on each side of the dashed line */
+    }
+}
+
+.item-right {
+    position: relative; /* Essential to position the button absolutely */
+}
+
+.wishlist-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 10;
+    transition: transform 0.2s ease;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+}
+
+.wishlist-btn:hover {
+    transform: scale(1.15);
+}
+
+/* When active/liked */
+.wishlist-btn.active {
+    color: #e11d48; /* Wellbeing Romance Red */
+}
+
+
+/* Simple Heartbeat Animation */
+@keyframes heartbeat {
+    0% { transform: scale(1); }
+    14% { transform: scale(1.3); }
+    28% { transform: scale(1); }
+    42% { transform: scale(1.3); }
+    70% { transform: scale(1); }
+}
+
+.wishlist-btn.animating {
+    animation: heartbeat 0.6s ease-in-out;
+}
+
+#ajaxToast {
+    background-color: white !important;
+    border-radius: 8px !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    min-width: 200px;
+    max-width: 300px;
+}
+
+#ajaxToast.toast-success {
+    border-left: 5px solid #28a745 !important;
+}
+
+#ajaxToast.toast-error {
+    border-left: 5px solid #dc3545 !important;
+}
+
+.toast-body {
+    padding: 12px 15px !important;
+    color: #333;
+}
+
+
+@media (max-width: 767px) {
+  .hero-wrap.hero-wrap-2 {
+    /* "50% center" is the default.
+       Adjust the first percentage to move the image:
+       Lower than 50% moves the image LEFT.
+       Higher than 50% moves the image RIGHT. */
+    background-position: 70% center !important;
+
+  }
+}
+
+/* Floating Chat Button */
+.floating-kera-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* This is the magic: it crops the image to fit perfectly */
+    border-radius: 50%;
+    display: block;
+}
+
+#chat-circle {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background: white;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+}
+
+#chat-circle:hover { transform: scale(1.1); }
+
+.avatar-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.avatar-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* The Chat Window */
+.chat-box {
+    position: fixed;
+    bottom: 110px;
+    right: 30px;
+    width: 350px;
+    height: 500px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.15); /* Semi-transparent */
+    backdrop-filter: blur(20px); /* Frosted effect */
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    display: flex;
+    flex-direction: column;
+    z-index: 1001;
+    overflow: hidden;
+}
+
+/* Chat Header */
+.chat-box-header {
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Message Bubbles */
+.bot-msg, .user-msg {
+    padding: 10px 15px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    max-width: 80%;
+    font-size: 14px;
+}
+
+.bot-msg {
+    background: rgba(0, 255, 127, 0.4);
+    align-self: flex-start;
+    color: #fff;
+}
+
+.user-msg {
+    background: rgba(0, 123, 255, 0.4);
+    align-self: flex-end;
+    color: #fff;
+    margin-left: auto;
+}
+
+/* Heartbeat Pulse */
+.pulse-animation {
+    animation: pulse-blue 2s infinite;
+}
+
+@keyframes pulse-blue {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+}
+
+/* Glass Teaser Bubble */
+.glass-teaser {
+    position: fixed;
+    bottom: 40px;
+    right: 105px; /* Positioned to the left of the circle */
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 10px 20px;
+    border-radius: 20px 20px 0 20px;
+    color: white;
+    font-size: 13px;
+    max-width: 200px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    z-index: 999;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.5s ease-in-out;
+}
+
+/* Online Indicator (Green Dot) */
+.online-indicator {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 12px;
+    height: 12px;
+    background: #2ecc71;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+/* Typing Indicator Styles */
+.typing {
+    align-self: flex-start;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 15px;
+    display: flex;
+    gap: 4px;
+    margin-bottom: 10px;
+}
+
+.typing span {
+    width: 6px;
+    height: 6px;
+    background-color: white;
+    border-radius: 50%;
+    display: inline-block;
+    animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.typing span:nth-child(1) { animation-delay: -0.32s; }
+.typing span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes bounce {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1.0); }
+}
+
+.pagination-wrapper .pagination {
+    gap: 10px;
+    margin-top: 40px;
+    margin-bottom: 60px;
+}
+
+.pagination-wrapper .page-link {
+    border: none;
+    background: #ffffff;
+    color: #8A70FF !important;
+    border-radius: 12px !important;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    box-shadow: 0 4px 15px rgba(159, 134, 255, 0.1);
+    text-decoration: none;
+}
+
+.pagination-wrapper .page-item.active .page-link {
+    background: #9F86FF !important; /* Main Lavender */
+    color: #ffffff !important;
+    box-shadow: 0 8px 20px rgba(159, 134, 255, 0.3);
+    transform: scale(1.05);
+}
+
+.pagination-wrapper .page-link:hover {
+    transform: translateY(-5px);
+    background: #E0D7FF;
+    color: #7052FF !important;
+}
+
+.pagination-wrapper .page-link iconify-icon {
+    font-size: 22px;
+}
+
+.recommended-glow {
+    border: 3px solid #064E3B !important;
+    box-shadow: 0 0 30px rgba(6, 78, 59, 0.3) !important;
+    transform: scale(1.02);
+    z-index: 5;
+}
+.recommended-item {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+}
+
+.kera-badge {
+    position: absolute;
+    top: 50px;
+    left: 10px;
+    background: #064E3B;
+    color: white;
+    padding: 6px 18px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    z-index: 100;
+}
+
+.recommendation-divider {
+    border: 0;
+    height: 1px;
+    background: #ddd;
+    margin: 50px 0;
+    position: relative;
+    overflow: visible;
+}
+
+.recommendation-divider::after {
+    content: "More Options For You";
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #f8f9fa;
+    padding: 0 15px;
+    color: #888;
+    font-size: 12px;
+}

@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extra_head %}
+<script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+<style>
+
+    .hover-up {
+        transition: all 0.3s ease;
+    }
+    .hover-up:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+    }
+
+    .position-relative {
+    position: relative !important;
+    }
+
+    .btn-remove {
+        /* Absolute positioning */
+        position: absolute !important;
+        top: 12px !important;
+        right: 12px !important;
+        z-index: 999 !important;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background-color: #ffffff !important;
+        color: #dc3545 !important;
+        border: 1px solid #dee2e6 !important;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2) !important;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .btn-remove:hover {
+        background-color: #dc3545 !important;
+        color: #ffffff !important;
+        transform: scale(1.1);
+        box-shadow: 0 6px 15px rgba(220, 53, 69, 0.4) !important;
+    }
+</style>
+
+{% endblock %}
+
+{% block content %}
+<div class="wishlist-header py-5 bg-light border-bottom">
+    <div class="container mt-5 pt-5">
+        <h1 class="fw-bold mb-1">My Wishlist</h1>
+        <p class="text-muted mb-0">You have {{ wishlist_items.count }} destinations saved for later.</p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row g-4">
+        {% for item in wishlist_items %}
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm hover-up" style="border-radius: 1.25rem; overflow: hidden;">
+                <div class="position-relative">
+
+                    <form action="{% url 'remove_from_wishlist' item.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-remove" title="Remove from wishlist">
+                            <iconify-icon icon="ph:heart-break-fill"></iconify-icon>
+                        </button>
+                    </form>
+                </div>
+
+                <div class="card-body p-4">
+                    <div class="mb-2">
+                        <span class="badge bg-soft-primary text-primary px-2 py-1 mb-2" style="background: #eef2ff;">
+                            {{ item.package.category|default:"Travel" }}
+                        </span>
+                        <h5 class="card-title fw-bold mb-1">{{ item.package.title }}</h5>
+                        <p class="text-muted small"><iconify-icon icon="ph:map-pin"></iconify-icon> {{ item.package.destination }}</p>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <div>
+                            <span class="text-muted small d-block">Price</span>
+                            <span class="fw-bold text-dark fs-5">₹{{ item.package.price }}</span>
+                        </div>
+                        <a href="{% url 'tours_details' item.package.slug %}" class="btn btn-primary rounded-pill px-4">
+                            Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="mb-4">
+                <iconify-icon icon="ph:suitcase-rolling-duotone" style="font-size: 80px; color: #cbd5e1;"></iconify-icon>
+            </div>
+            <h3 class="fw-bold">Your wishlist is empty</h3>
+            <p class="text-muted">Start exploring our handpicked travel packages!</p>
+            <a href="{% url 'tours_dashboard' %}" class="btn btn-primary btn-lg rounded-pill mt-3 px-5 shadow">Browse Tours</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+
+<script>
+    const nav = document.querySelector('.navbar');
+
+    // 1. Add background and shadow
+    nav.classList.add('bg-white', 'shadow-sm', 'border-bottom');
+
+    // 2. Switch from White text to Dark text
+    // remove 'navbar-dark' and add 'navbar-light'
+    nav.classList.remove('navbar-dark');
+    nav.classList.add('navbar-light');
+
+    // 3. (Optional) Force link colors if they are stubborn
+    nav.querySelectorAll('.nav-link').forEach(link => {
+        link.style.color = '#333';
+    });
+</script>
+
+{% endblock %}

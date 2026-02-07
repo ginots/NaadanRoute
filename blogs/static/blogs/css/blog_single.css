@@ -1,0 +1,38 @@
+.category-toggle {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100%;
+    text-decoration: none !important;
+}
+
+.count {
+    position: static !important;
+    display: inline-block !important;
+    margin-right: 5px;
+    color: #b3b3b3;
+    font-size: 0.9em;
+}
+
+.category-meta {
+    display: flex !important;
+    align-items: center !important;
+    flex-shrink: 0;
+}
+
+.arrow-icon {
+    display: inline-block;
+    font-size: 10px;
+    transition: transform 0.3s ease;
+    line-height: 1;
+}
+
+.category-toggle.active .arrow-icon {
+    transform: rotate(180deg);
+}
+
+.subcategories {
+    list-style: none !important;
+    padding-left: 20px !important;
+    margin-bottom: 10px;
+}

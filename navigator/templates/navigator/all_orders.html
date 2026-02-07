@@ -1,0 +1,283 @@
+{% load static %}
+{% include "navigator/dashboard_nav.html" %}
+
+
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header pb-0 px-3">
+              <div class="row">
+                <div class="col-6 d-flex align-items-center">
+                  <h6 class="mb-0">All Orders</h6>
+                </div>
+                <div class="col-6 text-end">
+                    <button type="button" onclick="exportData()" class="btn btn-link text-success p-0 me-3">
+                        <i class="fas fa-download"></i> Export Data
+                    </button>
+                    {% if show_view_all %}
+                        <a href="{% url 'view_all_orders' %}" class="btn btn-outline-primary btn-sm mb-0">View All</a>
+                    {% endif %}
+                </div>
+              </div>
+            </div>
+
+              <div class="col-12 mb-4">
+                  <div class="card card-body p-3">
+                    <form method="get" class="row g-3 align-items-end">
+
+                      <div class="col-md-4 col-sm-12">
+                        <label class="form-label text-xs font-weight-bold">Search (Title, Name, Destination,Order ID)</label>
+                        <input type="text" name="search_general" value="{{ request.GET.search_general }}" class="form-control form-control-sm" placeholder="Enter keyword...">
+                      </div>
+
+                      <div class="col-md-3 col-4">
+                        <label class="form-label text-xs font-weight-bold">Order Status</label>
+                        <select name="status" class="form-select form-select-sm">
+                          <option value="">All Statuses</option>
+                          <option value="ordered" {% if request.GET.status == 'ordered' %}selected{% endif %}>Ordered</option>
+                          <option value="Booking Confirmed" {% if request.GET.status == 'Booking Confirmed' %}selected{% endif %}>Booking Confirmed</option>
+                          <option value="Documents Issued" {% if request.GET.status == 'Documents Issued' %}selected{% endif %}>Documents Issued</option>
+                          <option value="Ongoing Trip" {% if request.GET.status == 'Ongoing Trip' %}selected{% endif %}>Ongoing Trip</option>
+                          <option value="Completed" {% if request.GET.status == 'Completed' %}selected{% endif %}>Completed</option>
+                          <option value="Refund Requested" {% if request.GET.status == 'Refund Requested' %}selected{% endif %}>Refund Requested</option>
+                          <option value="Refunded" {% if request.GET.status == 'Refunded' %}selected{% endif %}>Refunded</option>
+                          <option value="Issue Raised" {% if request.GET.status == 'Issue Raised' %}selected{% endif %}>Issue Raised</option>
+                          <option value="Resolved" {% if request.GET.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+                          <option value="Cancelled" {% if request.GET.status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                        </select>
+                      </div>
+
+                      <div class="col-md-2">
+                        <label class="form-label text-xs font-weight-bold">Check-in Date</label>
+                        <input type="date" name="checkin_date" value="{{ request.GET.checkin_date }}" class="form-control form-control-sm">
+                      </div>
+
+                      <div class="col-md-2">
+                        <label class="form-label text-xs font-weight-bold">Purchase Date</label>
+                        <input type="date" name="purchase_date" value="{{ request.GET.purchase_date }}" class="form-control form-control-sm">
+                      </div>
+
+                      <div class="col-md-2">
+                        <label class="form-label text-xs font-weight-bold">Check-in Month</label>
+                        <input type="month" name="checkin_month" value="{{ request.GET.checkin_month }}" class="form-control form-control-sm">
+                      </div>
+
+                      <div class="col-md-2">
+                        <label class="form-label text-xs font-weight-bold">Purchase Month</label>
+                        <input type="month" name="purchase_month" value="{{ request.GET.purchase_month }}" class="form-control form-control-sm">
+                      </div>
+
+                      <div class="col-md-2">
+                  <label class="form-label text-xs font-weight-bold">Sort By</label>
+                  <select name="sort" class="form-select form-select-sm">
+                    <option value="-id" {% if current_sort == '-id' %}selected{% endif %}>Newest First</option>
+                    <option value="id" {% if current_sort == 'id' %}selected{% endif %}>Oldest First</option>
+                    <option value="price" {% if current_sort == 'price' %}selected{% endif %}>Price: Low to High</option>
+                    <option value="-price" {% if current_sort == '-price' %}selected{% endif %}>Price: High to Low</option>
+                    <option value="title" {% if current_sort == 'title' %}selected{% endif %}>Name: A-Z</option>
+                  </select>
+                </div>
+
+                      <div class="col-12 d-flex justify-content-end gap-2 mt-3">
+                        <a href="?" class="btn btn-outline-secondary btn-sm mb-0 px-4">
+                            <i class="fas fa-undo me-1"></i> Reset
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-sm mb-0 px-4">
+                            <i class="fas fa-filter me-1"></i> Apply Filter
+                        </button>
+                      </div>
+
+                    </form>
+                  </div>
+              </div>
+
+
+              <div class="row mb-4">
+                <div class="col-md-3 col-sm-6 mb-4">
+                  <div class="card">
+                    <div class="card-header mx-4 p-3 text-center">
+                      <div class="icon icon-shape icon-lg bg-gradient-success shadow text-center border-radius-lg">
+                        <i class="fas fa-landmark opacity-10"></i>
+                      </div>
+                    </div>
+                    <div class="card-body pt-0 p-3 text-center">
+                      <h6 class="text-center mb-0">Total Order</h6>
+                      <span class="text-xs">Completed</span>
+                      <hr class="horizontal dark my-3">
+                      <h5 class="mb-0">{{completed_order_count}}</h5>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-4">
+                  <div class="card">
+                    <div class="card-header mx-4 p-3 text-center">
+                      <div class="icon icon-shape icon-lg bg-gradient-primary shadow text-center border-radius-lg">
+                        <i class="fas fa-landmark opacity-10"></i>
+                      </div>
+                    </div>
+                    <div class="card-body pt-0 p-3 text-center">
+                      <h6 class="text-center mb-0">Total Order</h6>
+                      <span class="text-xs">Received</span>
+                      <hr class="horizontal dark my-3">
+                      <h5 class="mb-0">{{total_orders}}</h5>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                  <div class="card">
+                    <div class="card-header mx-4 p-3 text-center">
+                      <div class="icon icon-shape icon-lg bg-gradient-success shadow text-center border-radius-lg">
+                        <i class="fab fa-paypal opacity-10"></i>
+                      </div>
+                    </div>
+                    <div class="card-body pt-0 p-3 text-center">
+                      <h6 class="text-center mb-0">Sales</h6>
+                      <span class="text-xs">Completed</span>
+                      <hr class="horizontal dark my-3">
+                      <h5 class="mb-0">{{completed_sales}}</h5>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                  <div class="card">
+                    <div class="card-header mx-4 p-3 text-center">
+                      <div class="icon icon-shape icon-lg bg-gradient-primary shadow text-center border-radius-lg">
+                        <i class="fab fa-paypal opacity-10"></i>
+                      </div>
+                    </div>
+                    <div class="card-body pt-0 p-3 text-center">
+                      <h6 class="text-center mb-0">Sales</h6>
+                      <span class="text-xs">Gross</span>
+                      <hr class="horizontal dark my-3">
+                      <h5 class="mb-0">{{total_sales}}</h5>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+              {% for i in tour %}
+            <div class="card-body pt-4 p-3">
+              <ul class="list-group">
+                <li class="list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg">
+                  <div class="d-flex flex-column">
+                    <h5 class="mb-3 ">{{ i.package.title }}</h5>
+                    <h5 class="mb-3 ">{{ i.package.duration }}</h5>
+                    <h1><span class="mb-2 text-sm">Check-in: <span class="text-dark ms-sm-2 font-weight-bold">{{ i.checkin_date }}&nbsp;{{ i.checkin_time }}</span></span></h1>
+                    <span class="mb-2 text-xs">Traveller Name: <span class="text-dark font-weight-bold ms-sm-2">{{ i.address.fullname }}</span></span>
+                    <span class="mb-2 text-xs">Email Address: <span class="text-dark ms-sm-2 font-weight-bold">{{ i.address.email }}</span></span>
+                    <span class="mb-2 text-xs">Phone Number: <span class="text-dark ms-sm-2 font-weight-bold">{{ i.address.phone }}</span></span>
+                    <span class="mb-2 text-xs">Head Count: <span class="text-dark ms-sm-2 font-weight-bold">{{ i.headcount }}</span>&nbsp;
+                    <span class="mb-2 text-xs">Price: <span class="text-dark ms-sm-2 font-weight-bold">{{ i.price }}</span></span></span>
+                    <span class="mb-2 text-xs">Purchase Date: <span class="text-dark ms-sm-2 font-weight-bold">{{ i.invoice_date }}</span></span>
+                    <span class="mb-2 text-xs">Address: <span class="text-dark ms-sm-2 font-weight-bold">{{ i.address.address }},{{ i.address.city }},{{ i.address.district }},{{ i.address.state }},{{ i.address.postcode }}</span></span>
+                    <span class="mb-2 text-xs">Room Type: <span class="text-dark ms-sm-2 font-weight-bold">{{ i.room_type }}</span></span>
+                    <span class="mb-2 text-xs">Energetic at: <span class="text-dark ms-sm-2 font-weight-bold">{{ i.energy_level }}</span></span>
+                    <span class="mb-2 text-xs">Vibe: <span class="text-dark ms-sm-2 font-weight-bold">{{ i.vibe }}</span></span>
+                    <span class="mb-2 text-xs">Note: <span class="text-dark ms-sm-2 font-weight-bold">{{ i.notes }}</span></span>
+                    <span class="mb-2 text-xs">Order ID: <span class="text-dark ms-sm-2 font-weight-bold">{{ i.order_id }}</span></span>
+                    <span class="mb-2 text-xs">Payment ID: <span class="text-dark ms-sm-2 font-weight-bold">{{ i.payment_id }}</span></span>
+                    <span class="mb-2 text-xs">Order Status: <span class="text-dark ms-sm-2 font-weight-bold">{{ i.order_status }}</span>
+                    <span>
+                        <a href="#"
+                           class="mb-0 text-xs font-semibold leading-tight"
+                           data-bs-toggle="modal"
+                           data-bs-target="#statusModal{{i.id}}">
+                           <u>change</u>
+                        </a>
+                    </span></span>
+                    <span class="mb-2 text-xs">Payment Method: <span class="text-dark ms-sm-2 font-weight-bold">{{ i.payment_method }}</span></span>
+                    <span class="text-xs">Payment Status: <span class="text-dark ms-sm-2 font-weight-bold">{{ i.payment_status }}</span></span>
+                  </div>
+                  <div class="ms-auto text-end">
+                    <a class="btn btn-link text-danger text-gradient px-3 mb-0" href="{% url 'delete_order' i.id %}"><i class="far fa-trash-alt me-2"></i>Delete</a>
+                    <a class="btn btn-link text-dark px-3 mb-0" href="{% url 'invoice' i.id %}"><i class="fas fa-pencil-alt text-dark me-2" aria-hidden="true"></i>Invoice</a>
+                  </div>
+                </li>
+
+              </ul>
+            </div>
+
+              <div class="modal fade" id="statusModal{{i.id}}" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+
+                      <div class="modal-header">
+                        <h5 class="modal-title">Change Order Status</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+
+                      <div class="modal-body">
+                        <form method="post" action="{% url 'change_order_status' i.id %}">
+                          {% csrf_token %}
+                          <label for="statusSelect">Select new status:</label>
+                          <select id="statusSelect" name="order_status" class="form-select">
+                            <option value="Booking Confirmed">Booking Confirmed</option>
+                            <option value="Documents Issued">Documents Issued</option>
+                            <option value="Ongoing Trip">Ongoing Trip</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Refund Requested">Refund Requested</option>
+                            <option value="Refunded">Refunded</option>
+                            <option value="Issue Raised">Issue Raised</option>
+                            <option value="Resolved">Resolved</option>
+                            <option value="Cancelled">Cancelled</option>
+                          </select>
+                          <button type="submit" class="btn btn-primary mt-3">Save</button>
+                        </form>
+                      </div>
+
+                    </div>
+                  </div>
+              </div>
+              {% empty %}
+                <div class="card-body text-center">
+                    <p>No orders found</p>
+                </div>
+              {% endfor %}
+                    <div class="d-flex justify-content-center p-3">
+                      <nav aria-label="Page navigation">
+                        <ul class="pagination pagination-primary mb-0">
+
+                          {% if tour.has_previous %}
+                            <li class="page-item">
+                              <a class="page-link" href="?page=1&{{ fixed_query_params }}" title="First Page">
+                                <i class="fas fa-angle-double-left"></i>
+                              </a>
+                            </li>
+                            <li class="page-item">
+                              <a class="page-link" href="?page={{ tour.previous_page_number }}&{{ fixed_query_params }}">
+                                <i class="fas fa-angle-left"></i>
+                              </a>
+                            </li>
+                          {% endif %}
+
+                          <li class="page-item active">
+                            <button class="page-link text-white border-0" disabled>
+                              {{ tour.number }}
+                            </button>
+                          </li>
+
+                          {% if tour.has_next %}
+                            <li class="page-item">
+                              <a class="page-link" href="?page={{ tour.next_page_number }}&{{ fixed_query_params }}">
+                                <i class="fas fa-angle-right"></i>
+                              </a>
+                            </li>
+                            <li class="page-item">
+                              <a class="page-link" href="?page={{ tour.paginator.num_pages }}&{{ fixed_query_params }}" title="Last Page">
+                                <i class="fas fa-angle-double-right"></i>
+                              </a>
+                            </li>
+                          {% endif %}
+
+                        </ul>
+                      </nav>
+                    </div>
+          </div>
+        </div>
+
+    <script>
+function exportData() {
+    const urlParams = new URLSearchParams(window.location.search);
+    window.location.href = "{% url 'export_orders_csv' %}?" + urlParams.toString();
+}
+</script>

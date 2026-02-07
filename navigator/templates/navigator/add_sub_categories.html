@@ -1,0 +1,51 @@
+{% load static %}
+{% include "navigator/dashboard_nav.html" %}
+
+ <section>
+
+                  <h3 class="font-weight-bolder text-info text-gradient">Add Sub Categories</h3>
+
+                <div class="card-body">
+                  <form role="form" action="{% url 'save_sub_categories' %}" method="post" enctype="multipart/form-data">
+                      {% csrf_token %}
+                    <label>Category</label>
+                    <div class="mb-3">
+                      <select name="category" style="width:300px;" class="form-control" aria-label="Category" aria-describedby="category-addon" required>
+                          {% for i in cate %}
+                        <option value="{{i.id}}">
+                            {{i.category}}
+                        </option>
+                          {% endfor %}
+                      </select>
+                    </div>
+                    <label>Sub Category</label>
+                    <div class="mb-3">
+                      <input type="text" name="sub_category" style="width:300px;" class="form-control" placeholder="Add Sub Category" aria-label="Sub Category" aria-describedby="subcategory-addon" required>
+                        {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-{{message.tags}}" style="color:red;">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+
+                    </div>
+                    <label>Image</label>
+                    <div class="mb-3">
+                      <input type="file" name="image" style="width:600px;" class="form-control" placeholder="Add Image" aria-label="Image" aria-describedby="image-addon">
+                    </div>
+                    <div class="form-check form-switch">
+                      <input class="form-check-input" type="checkbox" name="status" value="Active" id="rememberMe" checked="">
+                      <label class="form-check-label" for="rememberMe">Status</label>
+                    </div>
+                    <div class="text-center">
+                      <button type="submit" style="width:150px;" class="btn bg-gradient-info mt-4 mb-0">Submit</button>
+                    </div>
+                  </form>
+                </div>
+
+
+    </section>
+
+</body>
+</html>

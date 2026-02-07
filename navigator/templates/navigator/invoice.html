@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Itinerary Invoice</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .invoice-card {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            padding: 40px;
+            margin-top: 50px;
+        }
+        .travel-brand { color: #0d6efd; font-weight: 800; font-size: 24px; }
+        .vibe-badge {
+            background: #eef4ff;
+            color: #0d6efd;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        .table thead { background-color: #f8f9fa; }
+        .total-section { background: #0d6efd; color: white; border-radius: 10px; padding: 20px; }
+        @media print { .no-print { display: none; } }
+    </style>
+</head>
+<body>
+
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-9 invoice-card">
+
+            <div class="row mb-4">
+                <div class="col-sm-6">
+                    <div class="travel-brand">NaadanRoute</div>
+                    <p class="text-muted">Explore the soul</p>
+                </div>
+                <div class="col-sm-6 text-sm-end">
+                    <h2 class="mb-0">INVOICE</h2>
+                    <p class="text-muted">#INV-{{ data.order_id }}</p>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="row my-4">
+                <div class="col-sm-6">
+                    <h6>Billed To:</h6>
+                    <strong>{{ data.address.fullname }}</strong><br>
+                    {{ data.address.email }}<br>
+                    {{ data.address.phone }}<br>
+                    {{ data.address.address }}<br>
+                    {{ data.address.city }}<br>
+                    {{ data.address.district }},{{ data.address.state }}<br>
+                    {{ data.address.postcode }}<br>
+                    Package: <span class="text-primary fw-bold">{{ data.package.title}}</span>
+                </div>
+                <div class="col-sm-6 text-sm-end">
+                    <h6>Travel Date:</h6>
+                    <strong>{{ data.checkin_date }}</strong><br>
+                    {% if data.vibe %}
+                    Vibe:
+                    <div class="mt-1">
+                        <span class="vibe-badge">{{ data.vibe|title }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-borderless align-middle">
+                    <thead class="border-bottom">
+                        <tr>
+                            <th>Description</th>
+                            <th class="text-center">No. of people</th>
+                            <th class="text-end">Price</th>
+                            <th class="text-end">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-bottom">
+                            <td>
+                                <strong>{{ data.package.destination }}</strong><br>
+                                <small class="text-muted">{{ data.package.duration }}</small>
+                            </td>
+                            <td class="text-center">{{ data.headcount }}</td>
+                            <td class="text-end">{{ data.package.display_price }}</td>
+                            <td class="text-end fw-bold">{{ data.display_price }}</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-sm-7 text-muted">
+                    {% if data.notes %}
+                    <h6>Notes:</h6>
+                    <p>{{ data.notes }}</p>
+                    {% endif %}
+                </div>
+                <div class="col-sm-5">
+                    <div class="d-flex justify-content-between px-2">
+                        <span>Subtotal</span>
+                        <span>{{ data.display_price }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between px-2 mb-2">
+                        <span>Discount</span>
+                        <span>{{ discount }}</span>
+                    </div>
+                    <div class="total-section d-flex justify-content-between">
+                        <span class="h5 mb-0">Total Due</span>
+                        <span class="h5 mb-0">{{ data.price}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-5 no-print">
+                <button onclick="window.print()" class="btn btn-outline-primary px-4 me-2">Download PDF</button>
+                <a href="{% url 'orders' %}" class="btn btn-primary px-4">Back to Orders</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

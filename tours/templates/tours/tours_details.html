@@ -1,0 +1,148 @@
+{% extends "base.html" %}}
+{% load static %}
+{% block extra_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'tours/css/tours_details.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+
+
+
+{% endblock %}
+
+{% block content %}
+
+<section class="hero-wrap hero-wrap-2 hero-half" style="background-image: url('{% static 'tours/images/Tours_dashboard.png' %}');">
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row no-gutters slider-text align-items-end justify-content-center">
+      <div class="col-md-9 ftco-animate pb-5 text-center">
+         <p class="breadcrumbs">
+           <span class="mr-2"><a href="/">Home <i class="fa fa-chevron-right"></i></a></span>
+             <span><a href="{% url 'tours_dashboard' %}">Tours<i class="fa fa-chevron-right"></i></a></span>
+         </p>
+         <h1 class="mb-0 bread">Book Now</h1>
+     </div>
+   </div>
+</div>
+</section>
+
+<div class="page-content-wrapper">
+ <div class="order-container">
+        <div class="order-card">
+            <!-- Product Section -->
+     <form method="post" action="{% url 'book_now' data.slug %}">
+                {% csrf_token %}
+            <div class="product-section">
+                <h1 class="product-title">{{ data.title }}</h1>
+                <p class="product-subtitle">{{ data.destination }}</p>
+
+                <div class="product-image" onclick="rotateImage()">🧳</div>
+                <div class="owl-carousel owl-theme property-slider">
+                {% for img in data.media.all %}
+                <div class="slide-item"> <img src="{{ img.images.url }}" class="slider-img" alt="Property Image">
+                </div>
+                {% endfor %}
+                </div>
+
+                <div class="price-section">
+                    <span class="price-original">{{ data.display_price }}</span>
+                    <span class="price-current" >{{ data.price }} / {{data.price_for}}</span>
+                    <span class="price-save">Save {{ discount }}</span>
+                </div>
+
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">✨ {{data.tagline}}</p>
+                <div class="description-container">
+                    <p class="mb-0 text-sm text-dark">
+                        <span class="short-text">{{ data.description|truncatechars:100 }}</span>
+
+                        {% if data.description|length > 100 %}
+                            <a href="javascript:;"
+                               class="read-more-btn text-primary font-weight-bold text-xs ms-2 collapsed"
+                               data-bs-toggle="collapse"
+                               data-bs-target="#collapseDesc{{ data.id }}"
+                               aria-expanded="false">
+                               <span class="text-more">Read More</span>
+                               <span class="text-less">Read Less</span>
+                            </a>
+
+                            <div class="collapse mt-2" id="collapseDesc{{ data.id }}">
+                                <div class="card card-body p-3 bg-gray-100 text-xs shadow-none border-radius-lg" style="white-space: pre-line;">
+                                    {{ data.description }}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Order Form Section -->
+            <div class="form-section">
+
+
+                    <div class="form-row">
+
+                        <div class="form-group">
+                            <label for="quantity">Headcount</label>
+                            <div class="quantity-selector">
+                                <button type="button" class="quantity-btn" onclick="changeQuantity(-1)">−</button>
+                                <input type="number" id="quantity" name="headcount" value="1" min="1" max="70" class="quantity-input" readonly>
+                                <button type="button" class="quantity-btn" onclick="changeQuantity(1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="order-summary">
+                        <div class="summary-row">
+                            <span>Subtotal:</span>
+                            <span id="subtotal" data-base="{{ data.display_price }}">{{ data.display_price }}</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Discount:</span>
+                            <span id="discount" style="color: var(--accent-sage); font-weight: 500;" data-base="{{ discount }}">{{ discount }}</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Tax:</span>
+                            <span id="tax">included</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Total:</span>
+                            <span id="total" data-base="{{ data.price }}">{{ data.price }}</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="order-btn" >
+                        <span>Book Now - Secure Checkout</span>
+                    </button>
+     </form>
+
+                    <div class="security-badges">
+                        <div class="security-badge">
+                            <span>🔒</span>
+                            <span>SSL Encrypted</span>
+                        </div>
+                        <div class="security-badge">
+                            <span>💳</span>
+                            <span>Secure Payment</span>
+                        </div>
+                        <div class="security-badge">
+                            <span>↩️</span>
+                            <span>30-Day Return</span>
+                        </div>
+                    </div>
+
+            </div>
+        </div>
+    </div>
+ </div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+    <script src="{% static 'tours/js/tours_details.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+
+
+
+{% endblock %}

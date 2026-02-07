@@ -1,0 +1,209 @@
+{% load static %}
+{% include "navigator/dashboard_nav.html" %}
+
+      <div class="row">
+        <div class="col-12">
+          <div class="card mb-4">
+              <a class="btn bg-gradient-primary mt-4 w-100" href="{% url 'add_blogs' %}">Add Blogs</a>
+            <div class="card-header pb-0">
+              <h6>BLOGS</h6>
+            </div>
+            <div class="card-body px-0 pt-0 pb-2">
+              <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ID</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Sub Category</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Blog Title</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Content</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Image1</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Sub Content</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">2nd Title</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">2nd Content</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Image2</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">2nd Sub Content</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Summary Title</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Summary Content</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Tag</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Slug</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Date</th>
+                      <th colspan="2" class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
+
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% for i in blog %}
+                    <tr>
+                      <td>
+
+                        <p class="text-xs text-secondary mb-0">{{ forloop.counter }}</p>
+                      </td>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+
+                          <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0 text-sm">{{ i.sub_category.sub_category }}</h6>
+
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+
+                          <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0 text-sm">{{ i.blog_title }}</h6>
+
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+
+                          <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0 text-sm">{{ i.content | truncatechars:50 }}</h6>
+
+                          </div>
+                        </div>
+                      </td>
+
+                      <td class="align-middle text-center text-sm">
+                          {% if i.image1 %}
+                          <img src="{{ i.image1.url}}" width="50" height="50" class="mx-auto block">
+                          {% else %}
+                        <span class="badge badge-sm bg-gradient-secondary">No Image</span>
+                          {% endif %}
+                      </td>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+
+                          <div class="d-flex flex-column justify-content-center">
+                            <p class="mb-0 text-sm">{{ i.sub_content | truncatechars:50}}</p>
+
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+
+                          <div class="d-flex flex-column justify-content-center">
+                            <p class="mb-0 text-sm">{{ i.title2}}</p>
+
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+
+                          <div class="d-flex flex-column justify-content-center">
+                            <p class="mb-0 text-sm">{{ i.content2 | truncatechars:50}}</p>
+
+                          </div>
+                        </div>
+                      </td>
+                      <td class="align-middle text-center text-sm">
+                          {% if i.image2 %}
+                          <img src="{{ i.image2.url}}" width="50" height="50" class="mx-auto block">
+                          {% else %}
+                        <span class="badge badge-sm bg-gradient-secondary">No Image</span>
+                          {% endif %}
+                      </td>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+
+                          <div class="d-flex flex-column justify-content-center">
+                            <p class="mb-0 text-sm">{{ i.sub_content2 | truncatechars:50}}</p>
+
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+
+                          <div class="d-flex flex-column justify-content-center">
+                            <p class="mb-0 text-sm">{{ i.summary_title}}</p>
+
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+
+                          <div class="d-flex flex-column justify-content-center">
+                            <p class="mb-0 text-sm">{{ i.summary_content | truncatechars:50}}</p>
+
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+
+                          <div class="d-flex flex-column justify-content-center">
+                            <p class="mb-0 text-sm">{{ i.tag}}</p>
+
+                          </div>
+                        </div>
+                      </td>
+                      <td class="align-middle text-center">
+                          {% if i.status %}
+                        <span class="badge badge-sm bg-gradient-success">{{ i.status }}</span>
+                          {% else %}
+                        <span class="badge badge-sm bg-gradient-secondary">Inactive</span>
+                          {% endif %}
+                      </td>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+
+                          <div class="d-flex flex-column justify-content-center">
+                            <p class="mb-0 text-sm">{{ i.slug }}</p>
+
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+
+                          <div class="d-flex flex-column justify-content-center">
+                            <p class="mb-0 text-sm">{{ i.date}}</p>
+
+                          </div>
+                        </div>
+                      </td>
+                      <td class="align-middle">
+                        <a href="{% url 'edit_blogs' i.id %}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit category">
+                          Edit
+                        </a>
+                      </td>
+                      <td class="align-middle">
+                        <a href="{% url 'delete_blogs' i.id %}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Delete category">
+                          Delete
+                        </a>
+                      </td>
+                    </tr>
+                  {% endfor %}
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!--   Core JS Files   -->
+  <script src="{% static 'navigator/assets/js/core/popper.min.js' %}"></script>
+  <script src="{% static 'navigator/assets/js/core/bootstrap.min.js' %}"></script>
+  <script src="{% static 'navigator/assets/js/plugins/perfect-scrollbar.min.js' %}"></script>
+  <script src="{% static 'navigator/assets/js/plugins/smooth-scrollbar.min.js' %}"></script>
+
+  <!-- Github buttons -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+  <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
+  <script src="{% static 'navigator/assets/js/soft-ui-dashboard.min.js?v=1.0.3' %}"></script>
+
+</body>
+</html>
