@@ -47,7 +47,7 @@ def ai_chat(request):
                 content=user_message,
             )
             history_obj = TableChatMessages.objects.filter(session_id = session_key).order_by("-timestamp")[:10]
-            formatted_history = []
+            formatted_history = ""
             for i in reversed(history_obj):
                 role_label = "Sanchari" if i.role == "user" else "Kera"
                 formatted_history += f"{role_label}: {i.content}\n"
