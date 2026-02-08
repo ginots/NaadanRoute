@@ -5,7 +5,7 @@ Moving beyond traditional CRUD applications, it features **Kera**, a RAG-powered
 
 ## 🚀 Key Technical Highlights
 
-* **GenAI Integration (Kera):** A personality-driven chatbot utilizing **Gemini 1.5 Flash** and **RAG (Retrieval-Augmented Generation)** to match user emotions and needs with real-time package data.
+* **GenAI Integration (Kera):** A personality-driven chatbot utilizing **Gemini 2.5 Flash** and **RAG (Retrieval-Augmented Generation)** to match user emotions and needs with real-time package data.
 * **Role-Based Access Control (RBAC):** A custom-built admin suite ("Navigator") featuring granular permissions using Django decorators to separate Staff and Superuser capabilities.
 * **Transaction Engineering:** Secure payment processing via **Razorpay API** with server-side integrity checks and automated invoice generation.
 * **Data Intelligence:** Advanced filtering, aggregate sales analytics, and CSV data export functionality for business operations.
