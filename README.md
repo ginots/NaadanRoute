@@ -28,20 +28,28 @@ Moving beyond traditional CRUD applications, it features **Kera**, a RAG-powered
 ## 📁 Project Structure Highlights
 
 ```text
-├── NaadanRoute/      # Core project configuration & security settings
-├── accounts/         # User Authentication & Profile Management
-├── navigator/        # Administrative Dashboard & Logic
-├── tours/            # Travel Package Engines
-├── media/            # Dynamic user-uploaded travel assets
-└── static/           # Global CSS, JS, and UI frameworks
+.
+├── manage.py             # Django's command-line utility for administrative tasks
+├── NaadanRoute/          # Core project configuration & security settings
+├── core/                 # Landing page (Home) and site-wide logic
+├── blogs/                # Travel blog engine & category filtering
+├── accounts/             # User Authentication & Profile Management
+├── navigator/            # Administrative Dashboard & Business logic
+├── tours/                # Travel Package engine & AI-powered features
+├── templates/            # Global HTML templates
+│   ├── base.html         # Main layout skeleton
+│   └── share/            # Reusable components (Navbar, Footer, etc.)
+├── media/                # Dynamic assets (Travel packages, blog photos)
+└── static/               # Global CSS, JS, and UI frameworks
 ```
-🧠 Feature Deep-Dive
+## 🧠 Feature Deep-Dive
 
 ### 1. Kera: The RAG-Lite Chatbot
 
 Unlike standard bots, Kera uses **Context Injection**.
 
 * **Intent Detection:** Analyzes if a user is seeking adventure, relaxation, or culture.
+* **Prompt Engineering:** Kera is tuned with a specific "Malayali Guest-First" persona, ensuring responses are culturally resonant while maintaining technical accuracy.
 * **Dynamic Context:** The backend fetches available packages from the SQL database and injects them into the LLM prompt.
 * **Structured Output:** Uses regex and JSON parsing to extract a `suggested_package_id`, allowing the UI to highlight specific tours directly from the conversation.
 
