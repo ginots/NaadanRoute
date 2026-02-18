@@ -1,11 +1,11 @@
 NaadanRoute: AI-Powered Kerala Travel Ecosystem
 
 **NaadanRoute** is a sophisticated, full-stack travel platform designed to connect travelers ("Sancharis") with authentic Kerala travel experiences.
-Moving beyond traditional CRUD applications, it features **Kera**, a RAG-powered GenAI concierge, a secure administrative dashboard, and a fully integrated financial pipeline.
+Moving beyond traditional CRUD applications, it features **Kera**, a structured LLM orchestration, a secure administrative dashboard, and a fully integrated financial pipeline.
 
 ## 🚀 Key Technical Highlights
 
-* **GenAI Integration (Kera):** A personality-driven chatbot utilizing **Gemini 2.5 Flash** and **RAG (Retrieval-Augmented Generation)** to match user emotions and needs with real-time package data.
+* **GenAI Integration (Kera):** A personality-driven LLM system powered by **Gemini 2.5 Flash**, combining structured prompt engineering with real-time SQL context injection to ground LLM outputs in live inventory data and reduce hallucinations.
 * **Role-Based Access Control (RBAC):** A custom-built admin suite ("Navigator") featuring granular permissions using Django decorators to separate Staff and Superuser capabilities.
 * **Transaction Engineering:** Secure payment processing via **Razorpay API** with server-side integrity checks and automated invoice generation.
 * **Data Intelligence:** Advanced filtering, aggregate sales analytics, and CSV data export functionality for business operations.
@@ -14,14 +14,14 @@ Moving beyond traditional CRUD applications, it features **Kera**, a RAG-powered
 
 ## 🛠️ The Tech Stack
 
-| Layer | Technology |
-| --- | --- |
-| **Backend** | Django (Python) |
+| Layer | Technology                                       |
+| --- |--------------------------------------------------|
+| **Backend** | Django (Python)                                  |
 | **Frontend** | HTML5, CSS3, JavaScript (Django Template Engine) |
-| **Artificial Intelligence** | Gemini 2.5 Flash API, RAG Architecture |
-| **Database** | PostgreSQL / SQLite |
-| **Payments** | Razorpay Integration |
-| **Security** | RBAC, Custom Decorators, Session-based Memory |
+| **Artificial Intelligence** | Gemini 2.5 Flash API                             |
+| **Database** | MySQL / SQLite                                   |
+| **Payments** | Razorpay Integration                             |
+| **Security** | RBAC, Custom Decorators, Session-based Memory    |
 
 ---
 
@@ -44,11 +44,13 @@ Moving beyond traditional CRUD applications, it features **Kera**, a RAG-powered
 ```
 ## 🧠 Feature Deep-Dive
 
-### 1. Kera: The RAG-Lite Chatbot
+### 1. Kera: The Context-Aware AI Concierge
 
 Unlike standard bots, Kera uses **Context Injection**.
 
-* **Intent Detection:** Analyzes if a user is seeking adventure, relaxation, or culture.
+Kera is powered by a structured LLM orchestration pipeline:
+
+* **Intent Detection:** Detects emotional context (adventure, relaxation, culture, etc.).
 * **Prompt Engineering:** Kera is tuned with a specific "Malayali Guest-First" persona, ensuring responses are culturally resonant while maintaining technical accuracy.
 * **Dynamic Context:** The backend fetches available packages from the SQL database and injects them into the LLM prompt.
 * **Structured Output:** Uses regex and JSON parsing to extract a `suggested_package_id`, allowing the UI to highlight specific tours directly from the conversation.
