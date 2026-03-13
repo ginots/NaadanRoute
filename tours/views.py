@@ -18,7 +18,7 @@ import json
 from django.http import JsonResponse
 import os
 from django.conf import settings
-
+from .tasks import *
 
 
 razorpay_client = razorpay.Client(
@@ -236,6 +236,7 @@ def save_booking(request,tour_id):
                     obj.payment_method = "online"
                     obj.payment_status = "paid"
                     obj.save()
+                    send_booking_email.delay(obj.id)
                     messages.success(request, "Booking Successful!")
                     return redirect("/")
                 else:
@@ -260,6 +261,7 @@ def save_booking(request,tour_id):
                     obj.payment_method = "online"
                     obj.payment_status = "paid"
                     obj.save()
+                    send_booking_email.delay(obj.id)
                     messages.success(request, "Booking Successful!")
                     return redirect("/")
         except Exception as e:
